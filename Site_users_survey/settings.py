@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'Site_users_survey.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'std_950',
+        'USER': 'std_950',
+        'PASSWORD': '901109qsq',
+        'HOST': 'std-mysql.ist.mospolytech.ru',
+        'PORT': '3306',
     }
 }
 
@@ -104,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'GMT+3'
 
 USE_I18N = True
 
