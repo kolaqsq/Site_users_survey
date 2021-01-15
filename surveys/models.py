@@ -23,7 +23,8 @@ class Section(models.Model):
     section_desc = models.TextField('Описание секции', max_length=500, blank=True, null=True)
 
     def __str__(self):
-        return self.section_title
+        template = '{0.survey.survey_title}, {0.section_title}'
+        return template.format(self)
 
     class Meta:
         verbose_name = 'Секция анкеты'
@@ -57,7 +58,8 @@ class OptionChoice(models.Model):
     choice_name = models.CharField('Вариант ответа', max_length=250, blank=True, null=True)
 
     def __str__(self):
-        return self.group_id, self.choice_name
+        template = '{0.group.group_name}, {0.choice_name}'
+        return template.format(self)
 
     class Meta:
         verbose_name = 'Вариант ответов'
@@ -65,7 +67,7 @@ class OptionChoice(models.Model):
 
 
 class Question(models.Model):
-    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, verbose_name='Анкета')
+    # survey = models.ForeignKey(Survey, on_delete=models.CASCADE, verbose_name='Анкета')
     section = models.ForeignKey(Section, on_delete=models.CASCADE, default=1, verbose_name='Секция')
     question_type = models.ForeignKey(QuestionType, on_delete=models.DO_NOTHING, verbose_name='Тип вопроса')
     option_group = models.ForeignKey(OptionGroup, on_delete=models.DO_NOTHING, default=1, verbose_name='Тип ответа')
