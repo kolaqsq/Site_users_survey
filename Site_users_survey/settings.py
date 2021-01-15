@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'surveys.apps.SurveysConfig',
+    'answers.apps.AnswersConfig',
     'jet',
     'django.contrib.admin',
     'django.contrib.auth',

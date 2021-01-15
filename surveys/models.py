@@ -41,7 +41,7 @@ class QuestionType(models.Model):
         verbose_name_plural = 'Типы вопросов'
 
 
-class OptionGroups(models.Model):
+class OptionGroup(models.Model):
     group_name = models.CharField('Тип ответа', max_length=200)
 
     def __str__(self):
@@ -52,8 +52,8 @@ class OptionGroups(models.Model):
         verbose_name_plural = 'Типы ответов'
 
 
-class OptionChoices(models.Model):
-    group = models.ForeignKey(OptionGroups, on_delete=models.CASCADE, verbose_name='Тип ответов')
+class OptionChoice(models.Model):
+    group = models.ForeignKey(OptionGroup, on_delete=models.CASCADE, verbose_name='Тип ответов')
     choice_name = models.CharField('Вариант ответа', max_length=250, blank=True, null=True)
 
     def __str__(self):
@@ -68,7 +68,7 @@ class Question(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, verbose_name='Анкета')
     section = models.ForeignKey(Section, on_delete=models.CASCADE, default=1, verbose_name='Секция')
     question_type = models.ForeignKey(QuestionType, on_delete=models.DO_NOTHING, verbose_name='Тип вопроса')
-    option_group = models.ForeignKey(OptionGroups, on_delete=models.DO_NOTHING, default=1, verbose_name='Тип ответа')
+    option_group = models.ForeignKey(OptionGroup, on_delete=models.DO_NOTHING, default=1, verbose_name='Тип ответа')
     question_text = models.TextField('Вопрос', max_length=500)
 
     def __str__(self):
@@ -79,6 +79,6 @@ class Question(models.Model):
         verbose_name_plural = 'Вопросы'
 
 
-class QuestionOptions(models.Model):
+class QuestionOption(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    option_choice = models.ForeignKey(OptionChoices, on_delete=models.CASCADE)
+    option_choice = models.ForeignKey(OptionChoice, on_delete=models.CASCADE)
