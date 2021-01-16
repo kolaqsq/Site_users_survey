@@ -26,7 +26,9 @@ SECRET_KEY = 'ifhrsbxy!d0c%*x(gr%cjr4)_f81r^$f7_$fqs9b2j6%xdeem@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'test2.std-950.ist.mospolytech.ru',
+]
 
 
 # Application definition
