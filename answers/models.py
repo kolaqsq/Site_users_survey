@@ -1,6 +1,6 @@
 from django.db import models
 
-from surveys.models import Survey, QuestionOption
+from surveys.models import Survey, Question, OptionChoice
 
 
 class Surveyee(models.Model):
@@ -19,6 +19,11 @@ class Surveyee(models.Model):
 class SurveyeeSurvey(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE)
     surveyee = models.ForeignKey(Surveyee, on_delete=models.CASCADE, verbose_name='Анкетируемый')
+
+
+class QuestionOption(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    option_choice = models.ForeignKey(OptionChoice, on_delete=models.CASCADE)
 
 
 class Answer(models.Model):

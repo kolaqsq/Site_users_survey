@@ -81,6 +81,4 @@ class Question(models.Model):
         verbose_name_plural = 'Вопросы'
 
 
-class QuestionOption(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    option_choice = models.ForeignKey(OptionChoice, on_delete=models.CASCADE)
+
