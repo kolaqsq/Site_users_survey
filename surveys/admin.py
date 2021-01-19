@@ -96,7 +96,7 @@ class OptionGroupAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return []
         else:
-            return ['survey']
+            return ['creator']
 
     def get_queryset(self, request):
         query = OptionGroup.objects.filter(creator=request.user)
