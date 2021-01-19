@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Survey(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=2, verbose_name='Создатель')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Создатель', editable=False)
     survey_title = models.CharField('Название анкеты', max_length=200)
     survey_desc = models.TextField('Описание анкеты', max_length=500, blank=True, null=True)
     creation_date = models.DateTimeField('Дата публикации')
@@ -18,6 +18,7 @@ class Survey(models.Model):
 
 
 class Section(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=1, verbose_name='Создатель', editable=False)
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, verbose_name='Анкета')
     section_title = models.CharField('Название секции', max_length=200)
     section_desc = models.TextField('Описание секции', max_length=500, blank=True, null=True)
@@ -43,6 +44,7 @@ class QuestionType(models.Model):
 
 
 class OptionGroup(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Создатель', editable=False)
     group_name = models.CharField('Тип ответа', max_length=200)
 
     def __str__(self):
@@ -67,8 +69,7 @@ class OptionChoice(models.Model):
 
 
 class Question(models.Model):
-    # survey = models.ForeignKey(Survey, on_delete=models.CASCADE, verbose_name='Анкета')
-    section = models.ForeignKey(Section, on_delete=models.CASCADE, default=1, verbose_name='Секция')
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, verbose_name='Секция')
     question_type = models.ForeignKey(QuestionType, on_delete=models.DO_NOTHING, verbose_name='Тип вопроса')
     option_group = models.ForeignKey(OptionGroup, on_delete=models.DO_NOTHING, default=1, verbose_name='Тип ответа')
     question_text = models.TextField('Вопрос', max_length=500)
@@ -79,6 +80,5 @@ class Question(models.Model):
     class Meta:
         verbose_name = 'Вопрос'
         verbose_name_plural = 'Вопросы'
-
 
 
