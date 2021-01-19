@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.admin import DateFieldListFilter
+from django.core.exceptions import ValidationError
 
 from .models import Survey, Section, Question, OptionGroup, OptionChoice, QuestionType
 
@@ -10,6 +12,18 @@ class SectionInline(admin.StackedInline):
 
 class SurveyAdmin(admin.ModelAdmin):
     inlines = [SectionInline]
+
+    def get_list_display(self, request):
+        if request.user.is_superuser:
+            return ['creator', 'survey_title', 'is_open', 'creation_date']
+        else:
+            return ['survey_title', 'is_open', 'creation_date']
+
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['creator', 'is_open', ('creation_date', DateFieldListFilter)]
+        else:
+            return ['is_open', ('creation_date', DateFieldListFilter)]
 
     def get_queryset(self, request):
         query = Survey.objects.filter(creator=request.user)
@@ -23,8 +37,8 @@ class SurveyAdmin(admin.ModelAdmin):
 
     def save_related(self, request, form, formsets, change):
         for f in formsets:
-            for ob in f:
-                ob.instance.creator = request.user
+            for obj in f:
+                obj.instance.creator = request.user
         super(SurveyAdmin, self).save_related(request, form, formsets, change)
 
 
@@ -36,6 +50,18 @@ class QuestionInline(admin.StackedInline):
 class SectionAdmin(admin.ModelAdmin):
     inlines = [QuestionInline]
 
+    def get_list_display(self, request):
+        if request.user.is_superuser:
+            return ['creator', 'survey', 'section_title']
+        else:
+            return ['survey', 'section_title']
+
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return ['creator', 'survey']
+        else:
+            return ['survey']
+
     def get_queryset(self, request):
         query = Section.objects.filter(creator=request.user)
         if request.user.is_superuser:
@@ -44,7 +70,12 @@ class SectionAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.creator = request.user
-        super().save_model(request, obj, form, change)
+        current_user = Survey.objects.filter(creator=request.user)
+        chosen_user = Survey.objects.filter(creator=obj.survey.creator)
+        if list(current_user) == list(chosen_user):
+            super().save_model(request, obj, form, change)
+        else:
+            raise ValidationError('Вы не можете изменять данную акету')
 
 
 class OptionChoiceInline(admin.StackedInline):
@@ -54,6 +85,18 @@ class OptionChoiceInline(admin.StackedInline):
 
 class OptionGroupAdmin(admin.ModelAdmin):
     inlines = [OptionChoiceInline]
+
+    def get_list_display(self, request):
+        if request.user.is_superuser:
+            return ['creator', 'group_name']
+        else:
+            return ['group_name']
+
+    def get_list_filter(self, request):
+        if request.user.is_superuser:
+            return []
+        else:
+            return ['survey']
 
     def get_queryset(self, request):
         query = OptionGroup.objects.filter(creator=request.user)

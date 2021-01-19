@@ -10,7 +10,8 @@ class Survey(models.Model):
     is_open = models.BooleanField('Открыто для заполнения')
 
     def __str__(self):
-        return self.survey_title
+        template = '{0.creator}, {0.survey_title}'
+        return template.format(self)
 
     class Meta:
         verbose_name = 'Анкета'
@@ -18,13 +19,13 @@ class Survey(models.Model):
 
 
 class Section(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=1, verbose_name='Создатель', editable=False)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Создатель', editable=False)
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, verbose_name='Анкета')
     section_title = models.CharField('Название секции', max_length=200)
     section_desc = models.TextField('Описание секции', max_length=500, blank=True, null=True)
 
     def __str__(self):
-        template = '{0.survey.survey_title}, {0.section_title}'
+        template = '{0.creator}, {0.survey.survey_title}, {0.section_title}'
         return template.format(self)
 
     class Meta:
@@ -48,7 +49,8 @@ class OptionGroup(models.Model):
     group_name = models.CharField('Тип ответа', max_length=200)
 
     def __str__(self):
-        return self.group_name
+        template = '{0.creator}, {0.group_name}'
+        return template.format(self)
 
     class Meta:
         verbose_name = 'Тип ответов'
