@@ -5,6 +5,20 @@ from django.core.exceptions import ValidationError
 from .models import Survey, Section, Question, OptionGroup, OptionChoice, QuestionType
 
 
+def make_open(modeladmin, request, queryset):
+    queryset.update(is_open=True)
+
+
+make_open.short_description = 'Сделать доступными для заполнения'
+
+
+def make_close(modeladmin, request, queryset):
+    queryset.update(is_open=False)
+
+
+make_close.short_description = 'Сделать недоступными для заполнения'
+
+
 class SectionInline(admin.StackedInline):
     model = Section
     extra = 1
@@ -12,6 +26,7 @@ class SectionInline(admin.StackedInline):
 
 class SurveyAdmin(admin.ModelAdmin):
     inlines = [SectionInline]
+    actions = [make_open, make_close]
 
     def get_list_display(self, request):
         if request.user.is_superuser:
