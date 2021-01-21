@@ -19,42 +19,35 @@ def make_close(modeladmin, request, queryset):
 make_close.short_description = 'Сделать недоступными для заполнения'
 
 
-class SectionInline(admin.StackedInline):
-    model = Section
+class OptionChoiceInline(admin.StackedInline):
+    model = OptionChoice
     extra = 1
 
 
-class SurveyAdmin(admin.ModelAdmin):
-    inlines = [SectionInline]
-    actions = [make_open, make_close]
+class OptionGroupAdmin(admin.ModelAdmin):
+    inlines = [OptionChoiceInline]
 
     def get_list_display(self, request):
         if request.user.is_superuser:
-            return ['creator', 'survey_title', 'is_open', 'creation_date']
+            return ['creator', 'group_name']
         else:
-            return ['survey_title', 'is_open', 'creation_date']
+            return ['group_name']
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            return ['creator', 'is_open', ('creation_date', DateFieldListFilter)]
+            return []
         else:
-            return ['is_open', ('creation_date', DateFieldListFilter)]
+            return ['creator']
 
     def get_queryset(self, request):
-        query = Survey.objects.filter(creator=request.user)
+        query = OptionGroup.objects.filter(creator=request.user)
         if request.user.is_superuser:
-            query = Survey.objects.all()
+            query = OptionGroup.objects.all()
         return query
 
-    def save_model(self, request, obj, formset, change):
+    def save_model(self, request, obj, form, change):
         obj.creator = request.user
-        super().save_model(request, obj, formset, change)
-
-    def save_related(self, request, form, formsets, change):
-        for f in formsets:
-            for obj in f:
-                obj.instance.creator = request.user
-        super(SurveyAdmin, self).save_related(request, form, formsets, change)
+        super().save_model(request, obj, form, change)
 
 
 class QuestionInline(admin.StackedInline):
@@ -93,35 +86,42 @@ class SectionAdmin(admin.ModelAdmin):
             raise ValidationError('Вы не можете изменять данную акету')
 
 
-class OptionChoiceInline(admin.StackedInline):
-    model = OptionChoice
+class SectionInline(admin.StackedInline):
+    model = Section
     extra = 1
 
 
-class OptionGroupAdmin(admin.ModelAdmin):
-    inlines = [OptionChoiceInline]
+class SurveyAdmin(admin.ModelAdmin):
+    inlines = [SectionInline]
+    actions = [make_open, make_close]
 
     def get_list_display(self, request):
         if request.user.is_superuser:
-            return ['creator', 'group_name']
+            return ['creator', 'survey_title', 'is_open', 'creation_date']
         else:
-            return ['group_name']
+            return ['survey_title', 'is_open', 'creation_date']
 
     def get_list_filter(self, request):
         if request.user.is_superuser:
-            return []
+            return ['creator', 'is_open', ('creation_date', DateFieldListFilter)]
         else:
-            return ['creator']
+            return ['is_open', ('creation_date', DateFieldListFilter)]
 
     def get_queryset(self, request):
-        query = OptionGroup.objects.filter(creator=request.user)
+        query = Survey.objects.filter(creator=request.user)
         if request.user.is_superuser:
-            query = OptionGroup.objects.all()
+            query = Survey.objects.all()
         return query
 
-    def save_model(self, request, obj, form, change):
+    def save_model(self, request, obj, formset, change):
         obj.creator = request.user
-        super().save_model(request, obj, form, change)
+        super().save_model(request, obj, formset, change)
+
+    def save_related(self, request, form, formsets, change):
+        for f in formsets:
+            for obj in f:
+                obj.instance.creator = request.user
+        super(SurveyAdmin, self).save_related(request, form, formsets, change)
 
 
 admin.site.register(Survey, SurveyAdmin)

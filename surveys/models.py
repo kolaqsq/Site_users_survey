@@ -77,7 +77,8 @@ class Question(models.Model):
     question_text = models.TextField('Вопрос', max_length=500)
 
     def __str__(self):
-        return self.question_text
+        template = 'Вопрос №{0.id}. {0.section.section_title}, {0.section.survey}'
+        return template.format(self)
 
     class Meta:
         verbose_name = 'Вопрос'
