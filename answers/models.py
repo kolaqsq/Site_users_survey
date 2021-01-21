@@ -54,14 +54,3 @@ class Answer(models.Model):
     class Meta:
         verbose_name = 'Ответ'
         verbose_name_plural = 'Ответы'
-
-# insert into std_950.answers_answer (answer_text) values ('20');
-# insert into std_950.answers_answer (answer_text) values ('44');
-# insert into std_950.answers_answer (answer_text) values ('Согласен');
-# insert into std_950.answers_answer (answer_text) values ('Согласен');
-# insert into std_950.answers_answer (answer_text) values ('Не могу решить');
-# insert into std_950.answers_answer (answer_text) values ('Не согласен');
-# insert into std_950.answers_answer (answer_text) values ('Согласен');
-# insert into std_950.answers_answer (answer_text) values ('Частично не соответствует');
-# insert into std_950.answers_answer (answer_text) values ('2');
-# insert into std_950.answers_answer (answer_text) values ('б');

@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'surveys.apps.SurveysConfig',
     'answers.apps.AnswersConfig',
     'jet',
+    'rest_framework',
+    'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,9 +1,8 @@
 from django.contrib import admin
-from django.contrib.admin import DateFieldListFilter
-from django.db import connection
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 
-from answers.models import Surveyee, SurveyeeSurvey, QuestionOption, Answer
-from surveys.models import Survey
+from answers.models import Surveyee, SurveyeeSurvey, Answer
 
 
 class AnswerInline(admin.StackedInline):
@@ -11,7 +10,23 @@ class AnswerInline(admin.StackedInline):
     extra = 0
 
 
-class SurveyeeSurveyAdmin(admin.ModelAdmin):
+class SurveyeeSurveyResource(resources.ModelResource):
+    class Meta:
+        model = SurveyeeSurvey
+        skip_unchanged = True
+        report_skipped = False
+        import_id_fields = ('id',)
+        fields = (
+            'id',
+            'creator',
+            'survey__survey_title',
+            'surveyee__name',
+            'surveyee__surname'
+        )
+
+
+class SurveyeeSurveyAdmin(ImportExportModelAdmin):
+    resource_class = SurveyeeSurveyResource
     inlines = [AnswerInline]
 
     def get_list_display(self, request):
@@ -48,7 +63,22 @@ class SurveyeeSurveyAdmin(admin.ModelAdmin):
     surname.short_description = 'Фамилия'
 
 
-class SurveyeeAdmin(admin.ModelAdmin):
+class SurveyeeResource(resources.ModelResource):
+    class Meta:
+        model = Surveyee
+        skip_unchanged = True
+        report_skipped = False
+        import_id_fields = ('id',)
+        fields = (
+            'id',
+            'name',
+            'surname',
+            'email'
+        )
+
+
+class SurveyeeAdmin(ImportExportModelAdmin):
+    resource_class = SurveyeeResource
     list_display = ['name', 'surname']
     list_filter = ['name', 'surname']
     search_fields = ['name', 'surname']

@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     url(r'^jet/', include('jet.urls', 'jet')),
+    path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
 ]
