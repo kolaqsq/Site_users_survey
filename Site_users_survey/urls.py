@@ -16,8 +16,21 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+
+from surveys import views
+
+router = routers.DefaultRouter()
+router.register(r'survey', views.SurveyViewSet)
+router.register(r'section', views.SectionViewSet)
+router.register(r'question_type', views.QuestionTypeViewSet)
+router.register(r'option_group', views.OptionGroupViewSet)
+router.register(r'option_choice', views.OptionChoiceViewSet)
+router.register(r'question', views.QuestionViewSet)
 
 urlpatterns = [
     url(r'^jet/', include('jet.urls', 'jet')),
     path('admin/', admin.site.urls),
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
