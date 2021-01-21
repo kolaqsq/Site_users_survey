@@ -27,8 +27,7 @@ SECRET_KEY = 'ifhrsbxy!d0c%*x(gr%cjr4)_f81r^$f7_$fqs9b2j6%xdeem@'
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'test.std-950.ist.mospolytech.ru',
-    'test2.std-950.ist.mospolytech.ru',
+    'site-users-survey.std-950.ist.mospolytech.ru',
 ]
 
 
