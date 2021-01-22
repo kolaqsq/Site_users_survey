@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Survey(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Создатель', editable=False)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Создатель', default=1, editable=False)
     survey_title = models.CharField('Название анкеты', max_length=200)
     survey_desc = models.TextField('Описание анкеты', max_length=500, blank=True, null=True)
     creation_date = models.DateTimeField('Дата публикации')
