@@ -1,0 +1,34 @@
+version: '3'
+services:
+  web:
+    container_name: surveys-web
+    build:
+      context: .
+      dockerfile: deploy/web/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./src:/code
+    ports:
+      - '8000:8000'
+    networks:
+      - project
+    depends_on:
+      - db
+
+  db:
+    container_name: surveys-db
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password --slow_query_log=1 --log_output=TABLE --long-query-time=1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dev
+    ports:
+      - '3306:3306'
+    networks:
+      - project
+#    volumes:
+#      - ./db:/var/lib/mysql
+
+networks:
+  project:
+    name: surveys-network
