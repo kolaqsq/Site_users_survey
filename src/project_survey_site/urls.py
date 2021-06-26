@@ -13,11 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
-    path('grappelli/', include('grappelli.urls')),  # grappelli URLS
-    path('admin/', admin.site.urls),
-]
+                  path('grappelli/', include('grappelli.urls')),  # grappelli URLS
+                  path('_nested_admin/', include('nested_admin.urls')),  # nested admin URLS
+                  path('ckeditor/', include('ckeditor_uploader.urls')),  # ckeditor URLS
+                  path('admin/', admin.site.urls),  # admin URLS
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
