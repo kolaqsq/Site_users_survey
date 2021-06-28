@@ -67,3 +67,45 @@ class Question(models.Model):
     class Meta:
         verbose_name = 'Вопрос'
         verbose_name_plural = 'Вопросы'
+
+
+class AnswerSet(models.Model):
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, verbose_name='Анкета')
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    def __str__(self):
+        template = 'Набор ответов {0.id}'
+        return template.format(self)
+
+    class Meta:
+        verbose_name = 'Набор ответов'
+        verbose_name_plural = 'Наборы ответов'
+
+
+class AnswerSubset(models.Model):
+    set = models.ForeignKey(AnswerSet, on_delete=models.CASCADE, verbose_name='Нпбор ответов')
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, verbose_name='Секция')
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    def __str__(self):
+        template = 'Набор ответов на секцию {0.section.title}'
+        return template.format(self)
+
+    class Meta:
+        verbose_name = 'Набор ответов на секцию'
+        verbose_name_plural = 'Наборы ответов на секцию'
+
+
+class Answer(models.Model):
+    subset = models.ForeignKey(AnswerSubset, on_delete=models.CASCADE, verbose_name='Набор ответов на секцию')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='Вопрос')
+    answer = models.TextField('Ответ', max_length=500, blank=True, null=True)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    def __str__(self):
+        template = 'Ответ на вопрос {0.question.title}'
+        return template.format(self)
+
+    class Meta:
+        verbose_name = 'Ответ'
+        verbose_name_plural = 'Ответы'

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
 import nested_admin
 
-from .models import Survey, Section, Question, QuestionType
+from .models import Survey, Section, Question, QuestionType, Answer, AnswerSubset, AnswerSet
 
 
 class QuestionTypeAdmin(admin.ModelAdmin):
@@ -82,5 +82,72 @@ class SurveyAdmin(nested_admin.NestedModelAdmin):
         super().save_model(request, obj, formset, change)
 
 
+# class AnswerInline(nested_admin.NestedStackedInline):
+#     empty_value_display = 'автоматическая генерация'
+#     fields = ['question__question', 'question__choices', 'answer', 'created_at', ]
+#     readonly_fields = ['created_at', ]
+#     model = Answer
+#     extra = 0
+#     show_change_link = True
+#
+#
+# class AnswerSubsetInline(nested_admin.NestedStackedInline):
+#     empty_value_display = 'автоматическая генерация'
+#     fields = ['section__desc', 'created_at', ]
+#     readonly_fields = ['section__desc', 'created_at', ]
+#     model = AnswerSubset
+#     extra = 0
+#     show_change_link = True
+#     inlines = [AnswerInline]
+#
+#
+# class AnswerSetAdmin(nested_admin.NestedModelAdmin):
+#     date_hierarchy = 'created_at'
+#     list_display = ['__str__', 'survey', 'created_at', ]
+#     list_display_links = ['__str__', ]
+#     fields = ['survey__created_by', 'survey__title', ]
+#     readonly_fields = ['survey__created_by', 'survey__title', ]
+#     empty_value_display = 'автоматическая генерация'
+
+    # inlines = [AnswerSubsetInline]
+
+    # def get_readonly_fields(self, request, obj=None):
+    #     if request.user.is_superuser:
+    #         return ['survey__created_by', 'created_at', ]
+    #     else:
+    #         return ['created_at', ]
+    #
+    # def get_fields(self, request, obj=None):
+    #     if request.user.is_superuser:
+    #         return ['survey__created_by', 'survey__title', 'survey__desc', 'created_at', ]
+    #     else:
+    #         return ['survey__title', 'survey__desc', 'created_at', ]
+    #
+    # def get_list_display(self, request):
+    #     if request.user.is_superuser:
+    #         return ['survey__created_by', model_str, 'survey__title', 'created_at', ]
+    #     else:
+    #         return [model_str, 'survey__title', 'created_at', ]
+    #
+    # def get_list_filter(self, request):
+    #     if request.user.is_superuser:
+    #         return ['survey__created_by', 'survey__title', ('created_at', DateFieldListFilter), ]
+    #     else:
+    #         return ['survey__title', ('created_at', DateFieldListFilter), ]
+    #
+    # def get_search_fields(self, request):
+    #     if request.user.is_superuser:
+    #         return ['survey__created_by', 'survey__title', 'created_at', ]
+    #     else:
+    #         return ['survey__title', 'created_at', ]
+    #
+    # def get_queryset(self, request):
+    #     query = AnswerSet.objects.filter(survey__created_by=request.user)
+    #     if request.user.is_superuser:
+    #         query = AnswerSet.objects.all()
+    #     return query
+
+
 admin.site.register(Survey, SurveyAdmin)
 admin.site.register(QuestionType, QuestionTypeAdmin)
+# admin.site.register(AnswerSet, AnswerSetAdmin)
