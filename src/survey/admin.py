@@ -67,9 +67,9 @@ class SurveyAdmin(nested_admin.NestedModelAdmin):
 
     def get_search_fields(self, request):
         if request.user.is_superuser:
-            return ['created_by', 'title', 'is_open', 'created_at', 'updated_at', ]
+            return ['created_by__username', 'title', ]
         else:
-            return ['title', 'is_open', 'created_at', 'updated_at', ]
+            return ['title', ]
 
     def get_queryset(self, request):
         query = Survey.objects.filter(created_by=request.user)

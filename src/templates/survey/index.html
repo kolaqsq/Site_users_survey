@@ -1,0 +1,9 @@
+{% if survey_list %}
+    <ul>
+    {% for survey in survey_list %}
+        <li><a href="/survey/{{ survey.id }}/">{{ survey.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No surveys.</p>
+{% endif %}
