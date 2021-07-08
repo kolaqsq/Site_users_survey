@@ -1,0 +1,127 @@
+{% if survey.is_open %}
+
+    <form action="{% url 'survey:submit' survey.id %}" method="post">
+
+        {% csrf_token %}
+
+        <fieldset>
+            <legend>
+                <h1>{{ survey.title }}</h1>
+                <h2>{{ survey.desc }}</h2>
+            </legend>
+
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+            {% for section in survey.section_set.all %}
+
+                <legend>
+                    <h2>{{ section.title }}</h2>
+                    <h3>{{ section.desc }}</h3>
+                </legend>
+
+                {% for question in section.question_set.all %}
+
+                    <legend>
+                        <h3>{{ question.title }}</h3>
+                        <h4>{{ question.type }}</h4>
+                        <h4>{{ question.question }}</h4>
+                    </legend>
+
+                    {% if question.type.name == 'Выбрать один вариант' %}
+
+                        {% for choice in question.choices_as_list %}
+
+                            <input
+                                    type="radio"
+                                    name="answer_{{ question.id }}"
+                                    id="question{{ question.id }}_choice{{ forloop.counter }}"
+                                    value="{{ choice }}"
+                                    required
+                            >
+                            <label for="question{{ question.id }}_choice{{ forloop.counter }}">
+                                {{ choice }}
+                            </label><br>
+
+                        {% endfor %}
+
+                    {% elif question.type.name == 'Выбрать несколько вариантов' %}
+
+                        <div id="question_{{ question.id }}">
+
+                            {% for choice in question.choices_as_list %}
+
+                                <input
+                                        type="checkbox"
+                                        name="answer_{{ question.id }}"
+                                        id="question{{ question.id }}_choice{{ forloop.counter }}"
+                                        value="{{ choice }}"
+                                >
+                                <label for="question{{ question.id }}_choice{{ forloop.counter }}">
+                                    {{ choice }}
+                                </label><br>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <script>
+                            (function () {
+                                const form = document.querySelector('#question_{{ question.id }}');
+                                const checkboxes = form.querySelectorAll('input[type=checkbox]');
+                                const checkboxLength = checkboxes.length;
+                                const firstCheckbox = checkboxLength > 0 ? checkboxes[0] : null;
+
+                                function init() {
+                                    if (firstCheckbox) {
+                                        for (let i = 0; i < checkboxLength; i++) {
+                                            checkboxes[i].addEventListener('change', checkValidity);
+                                        }
+
+                                        checkValidity();
+                                    }
+                                }
+
+                                function isChecked() {
+                                    for (let i = 0; i < checkboxLength; i++) {
+                                        if (checkboxes[i].checked) return true;
+                                    }
+
+                                    return false;
+                                }
+
+                                function checkValidity() {
+                                    const errorMessage = !isChecked() ? 'At least one checkbox must be selected.' : '';
+                                    firstCheckbox.setCustomValidity(errorMessage);
+                                }
+
+                                init();
+                            })();
+                        </script>
+
+                    {% else %}
+
+                        <label for="question{{ question.id }}_answer">
+                            Ответ:
+                        </label>
+                        <input
+                                type="text"
+                                name="answer_{{ question.id }}"
+                                id="question{{ question.id }}_answer"
+                                required>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            {% endfor %}
+
+        </fieldset>
+
+        <input type="submit" value="Vote">
+    </form>
+
+{% else %}
+
+    <p>Анкета закрыта.</p>
+
+{% endif %}

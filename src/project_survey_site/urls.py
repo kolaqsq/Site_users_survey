@@ -17,12 +17,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from survey import views
 
 urlpatterns = [
                   path('grappelli/', include('grappelli.urls')),  # grappelli URLS
                   path('_nested_admin/', include('nested_admin.urls')),  # nested admin URLS
                   path('ckeditor/', include('ckeditor_uploader.urls')),  # ckeditor URLS
                   path('admin/', admin.site.urls),  # admin URLS
-                  path('', views.index, name='index'),
+                  path('accounts/', include('django.contrib.auth.urls')),  # auth
+                  path('', include('survey.urls')),  # survey URLconf
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

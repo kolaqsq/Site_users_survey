@@ -73,6 +73,8 @@ TEMPLATES = [
     },
 ]
 
+LOGIN_REDIRECT_URL = '/'
+
 WSGI_APPLICATION = 'project_survey_site.wsgi.application'
 
 

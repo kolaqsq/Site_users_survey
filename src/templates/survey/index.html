@@ -1,9 +1,34 @@
+{% load group_tags %}
 {% if survey_list %}
+    <span>{{ user.username }}</span>
+
+    {% if user|has_group:"Operators" or user.is_superuser %}
+        <a href="/dashboard/">Дашборд</a>
+    {% endif %}
+
+    <a href="/accounts/logout/">Выход</a><br>
+    <a href="/add/">Добаить</a>
+
     <ul>
-    {% for survey in survey_list %}
-        <li><a href="/survey/{{ survey.id }}/">{{ survey.title }}</a></li>
-    {% endfor %}
+        {% for survey in survey_list %}
+            <li>
+                {% if user|has_group:"Operators" or user.is_superuser %}
+                    <span>{{ survey.created_by }} </span>
+                {% endif %}
+
+                <span>{{ survey.title }} </span>
+                <a href="/{{ survey.id }}/">{{ request.build_absolute_uri }}{{ survey.id }}/</a>
+                <a href="/{{ survey.id }}/answers">Ответы</a>
+
+                {% if survey.is_open %}
+                    <span> Открыто</span>
+                {% else %}
+                    <span> Закрыто</span>
+                {% endif %}
+
+            </li>
+        {% endfor %}
     </ul>
 {% else %}
-    <p>No surveys.</p>
+    <p>Нет анкет.</p>
 {% endif %}
