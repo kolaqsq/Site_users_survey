@@ -1,4 +1,3 @@
-{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
@@ -14,33 +13,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@400;700;900&family=Stalinist+One&display=swap"
           rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'survey/css/main.css' %}" type="text/css">
+    <link rel="stylesheet" href="../css/main.css" type="text/css">
 </head>
 <body class="page">
 <header class="header">
     <span class="header__logo">Опросус</span>
 </header>
 <main class="main">
-    <form class="auth-form" method="post" action="{% url 'login' %}">
-        {% csrf_token %}
+    <form class="auth-form" method="post" action="/accounts/login/">
+        <input type="hidden" name="csrfmiddlewaretoken"
+               value="SSbAMOZlbb0hbAmijU1Yk7RlrxZbw1E4aT7YrX3VNiigm08lQMnLdD7UPjMEqfyl">
         <span class="auth-form__header">
             Для продолжения требуется авторизация
         </span>
         <div class="auth-form__line">
-            {{ form.username.label_tag }}
-            {{ form.username }}
+            <label class="auth-form__label" for="id_username">Имя пользователя:</label>
+            <input class="auth-form__field" type="text" name="username" value="5ек" autofocus autocapitalize="none"
+                   autocomplete="username" maxlength="150" required id="id_username">
         </div>
         <div class="auth-form__line">
-            {{ form.password.label_tag }}
-            {{ form.password }}
+            <label class="auth-form__label" for="id_password">Пароль:</label>
+            <input class="auth-form__field" type="password" name="password" autocomplete="current-password" required
+                   id="id_password">
         </div>
-        {% if form.errors %}
-            <span class="auth-form__error">
+
+        <span class="auth-form__error">
                 Неправильные логин или пароль. Повторите попытку
             </span>
-        {% endif %}
+
         <input class="auth-form__button" type="submit" value="Авторизоваться"/>
-        <input type="hidden" name="next" value="{{ next }}"/>
+        <input type="hidden" name="next" value="/"/>
     </form>
 </main>
 <footer class="footer">

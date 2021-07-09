@@ -1,4 +1,3 @@
-{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
@@ -14,15 +13,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@400;700;900&family=Stalinist+One&display=swap"
           rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'survey/css/main.css' %}" type="text/css">
+    <link rel="stylesheet" href="../css/main.css" type="text/css">
 </head>
 <body class="page">
 <header class="header">
     <span class="header__logo">Опросус</span>
 </header>
 <main class="main">
-    <form class="auth-form" method="post" action="{% url 'login' %}">
-        {% csrf_token %}
+    <form class="auth-form" method="post" action="/accounts/login/">
+        <input type="hidden" name="csrfmiddlewaretoken"
+               value="SSbAMOZlbb0hbAmijU1Yk7RlrxZbw1E4aT7YrX3VNiigm08lQMnLdD7UPjMEqfyl">
         <span class="auth-form__header">
             Выход выполнен успешно
         </span>

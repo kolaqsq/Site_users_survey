@@ -130,14 +130,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+
+
+MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
+
 HASHID_FIELD_SALT = "zrObwnVj3dqkeIcPPRDOHOY7TUi_a-n2DLBjy6t37Zd"
+
 HASHID_FIELD_BIG_MIN_LENGTH = 13
 
 # Default primary key field type

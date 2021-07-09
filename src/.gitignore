@@ -1,5 +1,4 @@
-project_survey_site/static/admin
-project_survey_site/static/ckeditor
-project_survey_site/static/grappelli
-project_survey_site/static/nested_admin
+project_survey_site/static
 project_survey_site/media
+
+
