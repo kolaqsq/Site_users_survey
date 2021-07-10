@@ -1,3 +1,66 @@
+{% load static %}
+{% load group_tags %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Личный кабинет</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@400;700;900&family=Stalinist+One&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'survey/css/main.css' %}" type="text/css">
+</head>
+<body class="page">
+<header class="header">
+    <span class="header__logo">Опросус</span>
+    <span class="header__text">{{ user.username }}</span>
+
+    {% if user|has_group:"Operators" or user.is_superuser %}
+        <a class="header_text header__text_link" href="{% url 'dashboard' %}">Дашборд</a>
+    {% endif %}
+
+    <a  class="header_text header__text_link" href="{% url 'logout' %}">Выход</a><br>
+</header>
+<main class="main">
+    <form class="auth-form" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <span class="auth-form__header">
+            Для продолжения требуется авторизация
+        </span>
+        <div class="auth-form__line">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div class="auth-form__line">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+        </div>
+        {% if form.errors %}
+            <span class="auth-form__error">
+                Неправильные логин или пароль. Повторите попытку
+            </span>
+        {% endif %}
+        <input class="auth-form__button" type="submit" value="Авторизоваться"/>
+        <input type="hidden" name="next" value="{{ next }}"/>
+    </form>
+</main>
+<footer class="footer">
+    <span class="footer__copyright">
+        2021 Rete Studio<sup class="footer__copyright">©</sup><br class="footer__copyright">
+        Копирование контента и размещение на других сайтах запрещено
+    </span>
+</footer>
+</body>
+</html>
+
 {% load group_tags %}
 {% if survey_list %}
     <span>{{ user.username }}</span>

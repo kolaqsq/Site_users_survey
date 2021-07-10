@@ -1,19 +1,13 @@
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse
 from django.views import generic
 
 from .models import Survey, Answer, AnswerSet, AnswerSubset
-
-
-@login_required
-def index(request):
-    survey_list = Survey.objects.filter(created_by=request.user)
-    if request.user.is_superuser:
-        survey_list = Survey.objects.all()
-    context = {'survey_list': survey_list, 'user': request.user}
-    return render(request, 'survey/index.html', context)
 
 
 class IndexView(generic.ListView):
@@ -64,3 +58,13 @@ def submit(request, survey_id):
 def result(request, survey_id):
     survey_instance = get_object_or_404(Survey, pk=survey_id)
     return render(request, 'survey/result.html', {'survey': survey_instance})
+
+
+def dashboard_with_pivot(request):
+    return render(request, 'dashboard/dashboard_with_pivot.html', {})
+
+
+def pivot_data(request):
+    dataset = Answer.objects.all()
+    data = serializers.serialize('json', dataset)
+    return JsonResponse(data, safe=False)

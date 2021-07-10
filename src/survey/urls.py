@@ -7,9 +7,10 @@ from . import views
 
 app_name = 'survey'
 urlpatterns = [
-                  # path('', views.index, name='index'),  # index
                   path('', login_required(views.IndexView.as_view()), name='index'),  # index
-                  path('<str:survey_id>/', views.survey, name='survey'),  # survey
-                  path('<str:survey_id>/result/', views.result, name='result'),  # result
-                  path('<str:survey_id>/submit/', views.submit, name='submit'),  # submit
+                  # path('dashboard/', views.dashboard_with_pivot, name='dashboard_with_pivot'),
+                  # path('dashboard/data/', views.pivot_data, name='pivot_data'),
+                  path('survey/<str:survey_id>/', views.survey, name='survey'),  # survey
+                  path('survey/<str:survey_id>/result/', views.result, name='result'),  # result
+                  path('survey/<str:survey_id>/submit/', views.submit, name='submit'),  # submit
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
