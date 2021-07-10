@@ -21,36 +21,80 @@
 <body class="page">
 <header class="header">
     <span class="header__logo">Опросус</span>
-    <span class="header__text">{{ user.username }}</span>
+    <span class="header__text">
+        <img src="{% static 'survey/svg/profile.svg' %}" alt="profile icon">
+        {{ user.username }}
+    </span>
 
     {% if user|has_group:"Operators" or user.is_superuser %}
-        <a class="header_text header__text_link" href="{% url 'dashboard' %}">Дашборд</a>
+        {#        <a class="header_text header__text_link" href="{% url 'dashboard' %}">#}
+        <a class="header_text header__text_link" href="{% url 'survey:index' %}">
+            <img src="{% static 'survey/svg/dashboard.svg' %}" alt="dashboard icon">
+            Дашборд
+        </a>
     {% endif %}
 
-    <a  class="header_text header__text_link" href="{% url 'logout' %}">Выход</a><br>
+    <a class="header_text header__text_link" href="{% url 'logout' %}">
+        <img src="{% static 'survey/svg/logout.svg' %}" alt="logout icon">
+        Выход
+    </a>
 </header>
 <main class="main">
-    <form class="auth-form" method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <span class="auth-form__header">
-            Для продолжения требуется авторизация
-        </span>
-        <div class="auth-form__line">
-            {{ form.username.label_tag }}
-            {{ form.username }}
+    <div class="surveys">
+        <div class="surveys__navbar">
+            {% if user|has_group:"Operators" or user.is_superuser %}
+                <span class="surveys__header">Все анкеты</span>
+            {% else %}
+                <span class="surveys__header">Мои анкеты</span>
+            {% endif %}
+            {#            <button class="surveys__button" onclick="window.location.href='{% url 'create' %}';">#}
+            <button class="surveys__button" onclick="window.location.href='{% url 'survey:index' %}';">
+                <img src="{% static 'survey/svg/add-shadow.svg' %}" alt="add icon">
+                Создать
+            </button>
         </div>
-        <div class="auth-form__line">
-            {{ form.password.label_tag }}
-            {{ form.password }}
-        </div>
-        {% if form.errors %}
-            <span class="auth-form__error">
-                Неправильные логин или пароль. Повторите попытку
-            </span>
+        {% if survey_list %}
+            <div class="surveys__list">
+                {% for survey in survey_list %}
+                    <div class="survey">
+                        {% if user|has_group:"Operators" or user.is_superuser %}
+                            <span class="survey__text">{{ survey.created_by }} </span>
+                        {% endif %}
+                        {#                        <button class="survey__button" onclick="window.location.href='{% url 'edit' survey.id %}';">#}
+                        <button class="survey__button" onclick="window.location.href='{% url 'survey:index' %}';">
+
+                            {{ survey.title }}
+                        </button>
+                        <button class="survey__button survey__button_secondary"
+                                onclick="window.location.href='{% url 'survey:survey' survey.id %}';">
+                            <img src="{% static 'survey/svg/link.svg' %}" alt="link icon">
+                            Перейти
+                        </button>
+                        {#                        <button class="survey__button survey__button_secondary"#}
+                        {#                                onclick="window.location.href='{% url 'answers' survey.id %}';">#}
+                        <button class="survey__button survey__button_secondary"
+                                onclick="window.location.href='{% url 'survey:index' %}';">
+                            <img src="{% static 'survey/svg/answers.svg' %}" alt="answers icon">
+                            Ответы
+                        </button>
+                        {% if survey.is_open %}
+                            <span class="survey__text">
+                                <img src="{% static 'survey/svg/true.svg' %}" alt="true icon">
+                                Открыто
+                            </span>
+                        {% else %}
+                            <span class="survey__text">
+                                <img src="{% static 'survey/svg/false.svg' %}" alt="false icon">
+                                Закрыто
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <span class="surveys__error"></span>
         {% endif %}
-        <input class="auth-form__button" type="submit" value="Авторизоваться"/>
-        <input type="hidden" name="next" value="{{ next }}"/>
-    </form>
+    </div>
 </main>
 <footer class="footer">
     <span class="footer__copyright">
@@ -61,37 +105,37 @@
 </body>
 </html>
 
-{% load group_tags %}
-{% if survey_list %}
-    <span>{{ user.username }}</span>
-
-    {% if user|has_group:"Operators" or user.is_superuser %}
-        <a href="/dashboard/">Дашборд</a>
-    {% endif %}
-
-    <a href="/accounts/logout/">Выход</a><br>
-    <a href="/add/">Добаить</a>
-
-    <ul>
-        {% for survey in survey_list %}
-            <li>
-                {% if user|has_group:"Operators" or user.is_superuser %}
-                    <span>{{ survey.created_by }} </span>
-                {% endif %}
-
-                <span>{{ survey.title }} </span>
-                <a href="/{{ survey.id }}/">{{ request.build_absolute_uri }}{{ survey.id }}/</a>
-                <a href="/{{ survey.id }}/answers">Ответы</a>
-
-                {% if survey.is_open %}
-                    <span> Открыто</span>
-                {% else %}
-                    <span> Закрыто</span>
-                {% endif %}
-
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Нет анкет.</p>
-{% endif %}
+{#{% load group_tags %}#}
+{#{% if survey_list %}#}
+{#    <span>{{ user.username }}</span>#}
+{##}
+{#    {% if user|has_group:"Operators" or user.is_superuser %}#}
+{#        <a href="/dashboard/">Дашборд</a>#}
+{#    {% endif %}#}
+{##}
+{#    <a href="/accounts/logout/">Выход</a><br>#}
+{#    <a href="/add/">Добаить</a>#}
+{##}
+{#    <ul>#}
+{#        {% for survey in survey_list %}#}
+{#            <li>#}
+{#                {% if user|has_group:"Operators" or user.is_superuser %}#}
+{#                    <span>{{ survey.created_by }} </span>#}
+{#                {% endif %}#}
+{##}
+{#                <span>{{ survey.title }} </span>#}
+{#                <a href="/{{ survey.id }}/">{{ request.build_absolute_uri }}{{ survey.id }}/</a>#}
+{#                <a href="/{{ survey.id }}/answers">Ответы</a>#}
+{##}
+{#                {% if survey.is_open %}#}
+{#                    <span> Открыто</span>#}
+{#                {% else %}#}
+{#                    <span> Закрыто</span>#}
+{#                {% endif %}#}
+{##}
+{#            </li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+{#{% else %}#}
+{#    <p>Нет анкет.</p>#}
+{#{% endif %}#}
