@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import generic
+from django.db.models import Q
 
 from .models import Survey, Answer, AnswerSet, AnswerSubset
 
@@ -14,20 +15,32 @@ class IndexView(generic.ListView):
     template_name = 'survey/index.html'
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            return Survey.objects.all()
-        else:
-            return Survey.objects.filter(created_by=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('q', '')
 
         survey_list = Survey.objects.filter(created_by=self.request.user)
         if self.request.user.is_superuser:
             survey_list = Survey.objects.all()
 
+        if query:
+            survey_list = survey_list.filter(Q(title__icontains=query) | Q(created_by__username__icontains=query))
+
+        return survey_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        query = self.request.GET.get('q', '')
+
+        survey_list = Survey.objects.filter(created_by=self.request.user)
+        if self.request.user.is_superuser:
+            survey_list = Survey.objects.all()
+
+        if query:
+            survey_list = survey_list.filter(Q(title__icontains=query) | Q(created_by__username__icontains=query))
+
         context['survey_list'] = survey_list
         context['user'] = self.request.user
+        context['query'] = query
 
         return context
 
