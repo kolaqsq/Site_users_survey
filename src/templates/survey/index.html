@@ -68,9 +68,9 @@
                 <span class="surveys__header">Мои анкеты</span>
             {% endif %}
             <div class="surveys__options">
-                {#            <button class="surveys__button" onclick="window.location.href='{% url 'create' %}';">#}
-                <button type="button" class="surveys__button"
-                        onclick="window.location.href='{% url 'survey:index' %}';">
+                <button type="button" class="surveys__button" onclick="window.location.href='{% url 'survey:create' %}';">
+                    {#                <button type="button" class="surveys__button"#}
+                    {#                        onclick="window.location.href='{% url 'survey:index' %}';">#}
                     <svg class="surveys__icon" width="28" height="28" viewBox="0 0 28 28" fill="none"
                          xmlns="http://www.w3.org/2000/svg">
                         <g filter="url(#filter0_dd)">
