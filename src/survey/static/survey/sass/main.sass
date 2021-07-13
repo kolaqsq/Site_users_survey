@@ -326,6 +326,174 @@ html
     font-weight: 700
     font-size: 1.875rem
 
+.create-form
+  display: flex
+  flex-flow: column nowrap
+  align-items: flex-start
+  justify-content: flex-start
+  align-self: stretch
+  margin: (155px / 960px * 100vh) (170px / 1600px * 100vw)
+
+  &__header
+    color: $accent-color
+    font-family: $standard-font
+    font-weight: 700
+    font-size: 2.25rem
+
+    &::selection
+      color: $primary-color
+      background-color: $accent-color
+
+.edit-survey
+  display: flex
+  flex-flow: column nowrap
+  align-items: flex-start
+  justify-content: flex-start
+  align-self: stretch
+  margin: (60px / 960px * 100vh) (20px / 1600px * 100vw) 0 (20px / 1600px * 100vw)
+
+  &__line
+    display: flex
+    flex-flow: row nowrap
+    align-items: center
+    justify-content: space-between
+    align-self: stretch
+    margin-bottom: (40px / 960px * 100vh)
+
+    &_vertical
+      flex-flow: column nowrap
+      align-items: flex-start
+
+    &_left
+      justify-content: flex-start
+
+  &__label
+    color: $accent-color
+    font-family: $standard-font
+    font-weight: 700
+    font-size: 1.875rem
+
+    &::selection
+      color: $primary-color
+      background-color: $accent-color
+
+  &__input
+    color: $accent-color
+    font-family: $standard-font
+    font-weight: 400
+    font-size: 1.25rem
+    background-color: $primary-color
+    border: 2px solid $accent-color
+    border-radius: 40px
+    box-shadow: -5px 5px 0px $accent-color
+    height: 35px
+    width: (790px / 1600px * 100vw)
+    max-width: 790px
+    padding-left: (20px / 1600px * 100vw)
+    margin-left: (20px / 1600px * 100vw)
+    transition: .25s
+
+    &::selection
+      color: $primary-color
+      background-color: $accent-color
+
+    &:hover
+      box-shadow: -2.5px 2.5px 0px $accent-color
+      outline: none
+      transition: .5s
+
+    &:focus
+      border-color: $secondary-color
+      box-shadow: -2.5px 2.5px 0px $secondary-color
+      outline: none
+      transition: .25s
+
+  &__textarea
+    display: flex
+    width: 100%
+    height: (240px / 960px * 100vh)
+    overflow: hidden
+    resize: vertical
+    color: $accent-color
+    font-family: $standard-font
+    font-weight: 400
+    font-size: 1.25rem
+    background-color: $primary-color
+    border: 2px solid $accent-color
+    border-radius: 20px
+    box-shadow: -5px 5px 0px $accent-color
+    padding: (20px / 1600px * 100vw)
+    margin: (20px / 960px * 100vh) 0 0 (20px / 1600px * 100vw)
+    transition: color .25s, box-shadow .25s, background-color .25s
+
+    &::selection
+      color: $primary-color
+      background-color: $accent-color
+
+    &:hover
+      box-shadow: -2.5px 2.5px 0px $accent-color
+      outline: none
+      transition: color .5s, box-shadow .5s, background-color .5s
+
+    &:focus
+      border-color: $secondary-color
+      box-shadow: -2.5px 2.5px 0px $secondary-color
+      outline: none
+      transition: color .25s, box-shadow .25s, background-color .25s
+
+  &__checkbox-wrapper
+    position: relative
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 30px
+    height: 37px
+    margin-right: (10px / 1600px * 100vw)
+
+  &__custom-box
+    position: absolute
+    top: 0
+    left: 0
+    width: 30px
+    height: 30px
+    background-color: $primary-color
+    border: 2px solid $accent-color
+    box-shadow: -3px 3px 0 $accent-color
+    border-radius: 30px
+    transition: .25s
+    z-index: 0
+
+  &__checkbox
+    position: absolute
+    top: 2px
+    left: 2px
+    z-index: 1
+    opacity: 0
+    margin: 0
+    cursor: pointer
+    width: 30px
+    height: 30px
+
+    &:active
+      background: none
+      outline: none
+
+    &:focus
+      outline: none
+
+    &:hover + .edit-survey__custom-box
+      box-shadow: -1.5px 1.5px 0px $accent-color
+      outline: none
+      transition: .5s
+
+    &:checked + .edit-survey__custom-box
+      background-color: $accent-color
+      border-color: $secondary-color
+      box-shadow: -3px 3px 0px $secondary-color
+      outline: none
+      transition: .25s
+
+
 .survey
   display: flex
   flex-flow: row nowrap
