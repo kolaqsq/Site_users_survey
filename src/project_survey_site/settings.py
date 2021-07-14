@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': 'std_950_survey',
         'USER': 'std_950_survey',
         'PASSWORD': '901109qsq',
-        'HOST': 'db',
+        'HOST': 'std-mysql.ist.mospolytech.ru',
         'PORT': '3306',
         # 'OPTIONS': {'charset': 'utf8mb4'},
     }
