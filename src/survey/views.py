@@ -1,4 +1,5 @@
 # from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
@@ -57,6 +58,22 @@ class CreateView(generic.TemplateView):
         return context
 
 
+class UpdateView(generic.TemplateView):
+    template_name = 'survey/update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        survey_instance = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
+
+        context['user'] = self.request.user
+        context['types'] = QuestionType.objects.all()
+        context['survey'] = survey_instance
+
+        return context
+
+
+@login_required
 def save(request):
     survey_obj = Survey.objects.create(
         created_by=request.user,
@@ -129,7 +146,134 @@ def save(request):
                 choices=''.join(question_data['choices']),
             )
 
-    return HttpResponseRedirect(reverse('survey:index'))
+    return HttpResponseRedirect(reverse('survey:save_success', args=(survey_obj.id,)))
+
+
+@login_required
+def saveSuccess(request, survey_id):
+    survey_instance = get_object_or_404(Survey, pk=survey_id)
+    return render(request, 'survey/save_success.html', {'survey': survey_instance})
+
+
+@login_required
+def save_update(request, survey_id):
+    survey_instance = Survey.objects.filter(pk=survey_id).update(
+        title=''.join(request.POST.getlist('survey-title')),
+        desc=''.join(request.POST.getlist('survey-desc')),
+        is_open=1 if request.POST.getlist('survey-status') else 0
+    )
+
+    survey_instance = get_object_or_404(Survey, pk=survey_id)
+
+    section_list = {}
+    delete_list = {}
+    current_section = ''
+    current_question = ''
+    section_iter = 0
+    question_iter = 0
+    delete_iter = 0
+
+    for key, value in request.POST.lists():
+        structure = key.split('-')
+
+        if 'delete' in key:
+            delete_list[delete_iter] = str(key)
+            delete_iter += 1
+
+        elif structure[0] == 'section':
+            if structure[1] != current_section:
+                current_section = str(structure[1])
+                section_iter += 1
+                question_iter = 0
+
+            if structure[2] == 'title':
+                section_list[section_iter] = {}
+                section_list[section_iter]['questions'] = {}
+                section_list[section_iter]['title'] = ''.join(value)
+
+                if not structure[1].isnumeric():
+                    section_list[section_iter]['id'] = structure[1]
+
+            elif structure[2] == 'desc':
+                section_list[section_iter]['desc'] = ''.join(value)
+
+            elif structure[2] == 'question':
+                if structure[3] != current_question:
+                    current_question = str(structure[3])
+                    question_iter += 1
+
+                if structure[4] == 'title':
+                    section_list[section_iter]['questions'][question_iter] = {}
+                    section_list[section_iter]['questions'][question_iter]['title'] = ''.join(value)
+
+                    if not structure[3].isnumeric():
+                        section_list[section_iter]['questions'][question_iter]['id'] = structure[3]
+
+                elif structure[4] == 'type':
+                    section_list[section_iter]['questions'][question_iter]['type'] = ''.join(value)
+
+                elif structure[4] == 'question':
+                    section_list[section_iter]['questions'][question_iter]['question'] = ''.join(value)
+
+                elif structure[4] == 'choices':
+                    section_list[section_iter]['questions'][question_iter]['choices'] = ''.join(value)
+
+    for section_key, section_data in section_list.items():
+        if 'id' in section_data:
+            section = Section.objects.filter(pk=section_data['id']).update(
+                title=''.join(section_data['title']),
+                desc=''.join(section_data['desc']),
+            )
+
+            section = get_object_or_404(Section, pk=section_data['id'])
+        else:
+            section = Section.objects.create(
+                survey=survey_instance,
+                title=''.join(section_data['title']),
+                desc=''.join(section_data['desc']),
+            )
+
+        for question_key, question_data in section_data['questions'].items():
+            if 'id' in question_data:
+                question = Question.objects.filter(pk=question_data['id']).update(
+                    title=''.join(question_data['title']),
+                    type=QuestionType.objects.get(pk=''.join(question_data['type'])),
+                    question=''.join(question_data['question']),
+                    choices=''.join(question_data['choices']),
+                )
+            else:
+                question = Question.objects.create(
+                    section=section,
+                    title=''.join(question_data['title']),
+                    type=QuestionType.objects.get(pk=''.join(question_data['type'])),
+                    question=''.join(question_data['question']),
+                    choices=''.join(question_data['choices']),
+                )
+
+    for key, value in delete_list.items():
+        structure = value.split('-')
+
+        if structure[0] == 'survey':
+            Survey.objects.filter(pk=structure[1]).delete()
+            return HttpResponseRedirect(reverse('survey:delete_success'))
+
+        elif structure[0] == 'section' and Section.objects.filter(pk=structure[1]).exists():
+            Section.objects.filter(pk=structure[1]).delete()
+        elif structure[0] == 'question' and Question.objects.filter(pk=structure[1]).exists():
+            Question.objects.filter(pk=structure[1]).delete()
+
+    return HttpResponseRedirect(reverse('survey:update_success', args=(survey_instance.id,)))
+
+
+@login_required
+def updateSuccess(request, survey_id):
+    survey_instance = get_object_or_404(Survey, pk=survey_id)
+    return render(request, 'survey/update_success.html', {'survey': survey_instance})
+
+
+@login_required
+def deleteSuccess(request):
+    return render(request, 'survey/delete_success.html')
 
 
 def survey(request, survey_id):

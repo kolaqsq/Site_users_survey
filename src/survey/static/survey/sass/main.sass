@@ -190,10 +190,9 @@ html
     height: 50px
     padding: 0 (20px / 1600px * 100vw)
     transition: .25s
-    //width: (450px / 1600px * 100vw)
-    //max-width: 450px
-    //padding-left: (20px / 1600px * 100vw)
-    //margin-left: (25px / 1600px * 100vw)
+
+    &::selection
+      background-color: $accent-color
 
     &:hover
       box-shadow: -2.5px 2.5px 0px $accent-color
@@ -278,6 +277,10 @@ html
 
     &::placeholder
       color: $accent-color
+
+    &::selection
+      color: $primary-color
+      background-color: $accent-color
 
   &__button
     display: flex
@@ -409,6 +412,8 @@ html
   align-items: flex-start
   justify-content: flex-start
   align-self: stretch
+  border: none
+  padding: 0
   margin: (60px / 960px * 100vh) (20px / 1600px * 100vw) 0 (20px / 1600px * 100vw)
 
   &__line
@@ -956,6 +961,9 @@ html
       outline: none
       transition: .25s
 
+    &:disabled
+      opacity: 1
+
     & option:hover
       color: $primary-color
       background-color: $accent-color
@@ -1079,6 +1087,23 @@ html
       &::selection
         color: $accent-color
         background-color: $primary-color
+
+.delete
+  background-color: $secondary-color
+
+  span
+    color: $primary-color
+
+    &::selection
+      color: $secondary-color
+      background-color: $primary-color
+
+  svg:hover path, path:hover
+    fill: $accent-color
+
+  path
+    fill: $primary-color
+
 
 .footer
   display: flex

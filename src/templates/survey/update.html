@@ -1,0 +1,368 @@
+{% load static %}
+{% load group_tags %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Создание анкеты</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@400;700;900&family=Stalinist+One&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'survey/css/main.css' %}" type="text/css">
+
+    <script>
+        let count = 0
+        let for_deletion = []
+
+        function addSection() {
+            let num = count.toString();
+            count++;
+            let section = document.createElement("div");
+            section.className = "edit-section";
+            section.id = "edit-section-" + num + "";
+            section.innerHTML = '<div class="edit-section__top-bar">\n' +
+                '                        <span class="edit-section__header">Новая секция</span>\n' +
+                '                        <svg class="edit-section__icon" width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
+                '                             xmlns="http://www.w3.org/2000/svg">\n' +
+                '                            <path onclick="removeElement(\'edit-section-' + num + '\')" fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                                  d="M12 0C5.37273 0 0 5.37273 0 12C0 18.6273 5.37273 24 12 24C18.6273 24 24 18.6273 24 12C24 5.37273 18.6273 0 12 0ZM7.63636 10.9091C7.34704 10.9091 7.06956 11.024 6.86497 11.2286C6.66039 11.4332 6.54545 11.7107 6.54545 12C6.54545 12.2893 6.66039 12.5668 6.86497 12.7714C7.06956 12.976 7.34704 13.0909 7.63636 13.0909H16.3636C16.653 13.0909 16.9304 12.976 17.135 12.7714C17.3396 12.5668 17.4545 12.2893 17.4545 12C17.4545 11.7107 17.3396 11.4332 17.135 11.2286C16.9304 11.024 16.653 10.9091 16.3636 10.9091H7.63636Z"\n' +
+                '                                  fill="#F8D4D4"></path>\n' +
+                '                        </svg>\n' +
+                '                    </div>\n' +
+                '                    <div class="edit-section__line">\n' +
+                '                        <label class="edit-section__label" for="section-' + num + '-title">Название:</label>\n' +
+                '                        <input class="edit-section__input" type="text" name="section-' + num + '-title" id="section-' + num + '-title"\n' +
+                '                               maxlength="200"\n' +
+                '                               required>\n' +
+                '                    </div>\n' +
+                '                    <div class="edit-section__line edit-section__line_vertical">\n' +
+                '                        <label class="edit-section__label" for="section-' + num + '-desc">Описание:</label>\n' +
+                '                        <textarea class="edit-section__textarea" id="section-' + num + '-desc" name="section-' + num + '-desc"\n' +
+                '                                  maxlength="1000"></textarea>\n' +
+                '                    </div>\n' +
+                '                    <div class="edit-section__line edit-section__line_vertical" id="questions-container-' + num + '">\n' +
+                '                        <span class="edit-section__label">Вопросы:</span>\n' +
+                '                        <button class="edit-section__button" onclick="addQuestion(\'questions-container-' + num + '\', ' + num + ');" id="section-button-' + num + '" type="button">Добавить вопрос</button>\n' +
+                '                    </div>\n';
+            const container = document.getElementById('sections-container');
+            container.insertBefore(section, container.lastElementChild);
+        }
+
+        function addQuestion(container_id, section_num) {
+            let num = count;
+            count++;
+            var question = document.createElement("div");
+            question.className = "edit-question";
+            question.id = "edit-question-" + num + "";
+            question.innerHTML = '<div class="edit-question__top-bar">\n' +
+                '                        <span class="edit-question__header">Новый вопрос</span>\n' +
+                '                        <svg class="edit-question__icon" width="24" height="24" viewBox="0 0 24 24" fill="none"\n' +
+                '                             xmlns="http://www.w3.org/2000/svg">\n' +
+                '                            <path onclick="removeElement(\'edit-question-' + num + '\')" fill-rule="evenodd" clip-rule="evenodd"\n' +
+                '                                  d="M12 0C5.37273 0 0 5.37273 0 12C0 18.6273 5.37273 24 12 24C18.6273 24 24 18.6273 24 12C24 5.37273 18.6273 0 12 0ZM7.63636 10.9091C7.34704 10.9091 7.06956 11.024 6.86497 11.2286C6.66039 11.4332 6.54545 11.7107 6.54545 12C6.54545 12.2893 6.66039 12.5668 6.86497 12.7714C7.06956 12.976 7.34704 13.0909 7.63636 13.0909H16.3636C16.653 13.0909 16.9304 12.976 17.135 12.7714C17.3396 12.5668 17.4545 12.2893 17.4545 12C17.4545 11.7107 17.3396 11.4332 17.135 11.2286C16.9304 11.024 16.653 10.9091 16.3636 10.9091H7.63636Z"\n' +
+                '                                  fill="#F8D4D4"></path>\n' +
+                '                        </svg>\n' +
+                '                    </div>\n' +
+                '                    <div class="edit-question__line">\n' +
+                '                        <label class="edit-question__label" for="section-' + section_num + '-question-' + num + '-title">Название:</label>\n' +
+                '                        <input class="edit-question__input" type="text" name="section-' + section_num + '-question-' + num + '-title" id="section-' + section_num + '-question-' + num + '-title"\n' +
+                '                               maxlength="200"\n' +
+                '                               required>\n' +
+                '                    </div>\n' +
+                '                    <div class="edit-question__line">\n' +
+                '                        <label class="edit-question__label" for="section-' + section_num + '-question-' + num + '-type">Тип вопроса:</label>\n' +
+                '                        <select name="section-' + section_num + '-question-' + num + '-type" id="section-' + section_num + '-question-' + num + '-type" class="edit-question__select" required>\n' +
+                '                            {% for type in types %}\n' +
+                    '                                <option value="{{ type.id }}" class="edit-question__option">{{ type.name }}</option>\n'
+                    +
+                    '                            {% endfor %}\n' +
+                '                        </select>\n' +
+                '                    </div>\n' +
+                '                    <div class="edit-question__line edit-question__line_vertical">\n' +
+                '                        <label class="edit-question__label" for="section-' + section_num + '-question-' + num + '-question">Вопрос:</label>\n' +
+                '                        <textarea class="edit-question__textarea" id="section-' + section_num + '-question-' + num + '-question" name="section-' + section_num + '-question-' + num + '-question"\n' +
+                '                                  maxlength="1000" required></textarea>\n' +
+                '                    </div>\n' +
+                '                    <div class="edit-question__line edit-question__line_vertical">\n' +
+                '                        <label class="edit-question__label" for="section-' + section_num + '-question-' + num + '-choices">Варианты ответа:</label>\n' +
+                '                        <textarea class="edit-question__textarea" id="section-' + section_num + '-question-' + num + '-choices" name="section-' + section_num + '-question-' + num + '-choices"\n' +
+                '                                  maxlength="1000"></textarea>\n' +
+                '                        <span class="edit-question__hint">Каждый вариант ответа вводить с новой строки<br>\n' +
+                '                            Оставить поле пустым, если выбран тип ответа в свободной форме</span>\n' +
+                '                    </div>';
+            const container = document.getElementById(container_id);
+            container.insertBefore(question, container.lastElementChild);
+        }
+
+        function removeElement(element_id) {
+            const element = document.getElementById(element_id);
+            element.parentNode.removeChild(element);
+        }
+
+        function addForDelete(name, id='') {
+            const index = for_deletion.indexOf(name);
+            const bar = document.getElementById(id)
+            if (index > -1) {
+                for_deletion.splice(index, 1);
+                bar.classList.remove('delete');
+            } else {
+                for_deletion.push(name);
+                bar.classList.add('delete');
+            }
+            console.log(for_deletion)
+        }
+
+        function submitForm() {
+            const form = document.getElementById('form');
+
+            for (let elem in for_deletion) {
+                let input = document.createElement('input');
+                input.setAttribute('name', for_deletion[elem]);
+                input.setAttribute('value', for_deletion[elem]);
+                input.setAttribute('type', 'hidden');
+
+                form.appendChild(input);
+            }
+            console.log(for_deletion)
+            form.submit();
+        }
+
+    </script>
+</head>
+<body class="page">
+<header class="header">
+    <a class="header__logo" href="{% url 'survey:index' %}">Опросус</a>
+    <div class="header__navbar">
+        <span class="header__text">
+        <svg class="header__icon" width="28" height="28" viewBox="0 0 28 28" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 0C6.272 0 0 6.272 0 14C0 21.728 6.272 28 14 28C21.728 28 28 21.728 28 14C28 6.272 21.728 0 14 0ZM14 4.2C16.324 4.2 18.2 6.076 18.2 8.4C18.2 10.724 16.324 12.6 14 12.6C11.676 12.6 9.8 10.724 9.8 8.4C9.8 6.076 11.676 4.2 14 4.2ZM14 24.08C10.5 24.08 7.406 22.288 5.6 19.572C5.642 16.786 11.2 15.26 14 15.26C16.786 15.26 22.358 16.786 22.4 19.572C20.594 22.288 17.5 24.08 14 24.08Z"
+                  fill="#F8D4D4">
+            </path>
+        </svg>
+        {{ user.username }}
+    </span>
+
+        {% if user|has_group:"Operators" or user.is_superuser %}
+            {#        <a class="header_text header__text_link" href="{% url 'dashboard' %}">#}
+            <a class="header__text header__text_link" href="{% url 'survey:index' %}">
+                <svg class="header__icon" width="28" height="28" viewBox="0 0 28 28"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.55556 15.5556H10.8889C11.3014 15.5556 11.6971 15.3917 11.9888 15.0999C12.2806 14.8082 12.4444 14.4126 12.4444 14V1.55556C12.4444 1.143 12.2806 0.747335 11.9888 0.455612C11.6971 0.163888 11.3014 0 10.8889 0H1.55556C1.143 0 0.747335 0.163888 0.455612 0.455612C0.163888 0.747335 0 1.143 0 1.55556V14C0 14.4126 0.163888 14.8082 0.455612 15.0999C0.747335 15.3917 1.143 15.5556 1.55556 15.5556ZM0 26.4444C0 26.857 0.163888 27.2527 0.455612 27.5444C0.747335 27.8361 1.143 28 1.55556 28H10.8889C11.3014 28 11.6971 27.8361 11.9888 27.5444C12.2806 27.2527 12.4444 26.857 12.4444 26.4444V20.2222C12.4444 19.8097 12.2806 19.414 11.9888 19.1223C11.6971 18.8306 11.3014 18.6667 10.8889 18.6667H1.55556C1.143 18.6667 0.747335 18.8306 0.455612 19.1223C0.163888 19.414 0 19.8097 0 20.2222V26.4444ZM15.5556 26.4444C15.5556 26.857 15.7194 27.2527 16.0112 27.5444C16.3029 27.8361 16.6986 28 17.1111 28H26.4444C26.857 28 27.2527 27.8361 27.5444 27.5444C27.8361 27.2527 28 26.857 28 26.4444V15.5556C28 15.143 27.8361 14.7473 27.5444 14.4556C27.2527 14.1639 26.857 14 26.4444 14H17.1111C16.6986 14 16.3029 14.1639 16.0112 14.4556C15.7194 14.7473 15.5556 15.143 15.5556 15.5556V26.4444ZM17.1111 10.8889H26.4444C26.857 10.8889 27.2527 10.725 27.5444 10.4333C27.8361 10.1416 28 9.74589 28 9.33333V1.55556C28 1.143 27.8361 0.747335 27.5444 0.455612C27.2527 0.163888 26.857 0 26.4444 0H17.1111C16.6986 0 16.3029 0.163888 16.0112 0.455612C15.7194 0.747335 15.5556 1.143 15.5556 1.55556V9.33333C15.5556 9.74589 15.7194 10.1416 16.0112 10.4333C16.3029 10.725 16.6986 10.8889 17.1111 10.8889Z"
+                          fill="#F8D4D4">
+                    </path>
+                </svg>
+                Дашборд
+            </a>
+        {% endif %}
+
+        <a class="header__text header__text_link" href="{% url 'logout' %}">
+            <svg class="header__icon" width="33" height="28" viewBox="0 0 33 28" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.88477 14C8.88477 13.6625 9.0185 13.3387 9.25653 13.1C9.49456 12.8614 9.8174 12.7273 10.154 12.7273H21.5773V4.45455C21.5773 1.90909 18.8968 0 16.5003 0H4.44239C3.26458 0.00126336 2.13537 0.470986 1.30254 1.3061C0.4697 2.14122 0.00125991 3.27351 0 4.45455V23.5455C0.00125991 24.7265 0.4697 25.8588 1.30254 26.6939C2.13537 27.529 3.26458 27.9987 4.44239 28H17.1349C18.3127 27.9987 19.4419 27.529 20.2748 26.6939C21.1076 25.8588 21.576 24.7265 21.5773 23.5455V15.2727H10.154C9.8174 15.2727 9.49456 15.1386 9.25653 14.9C9.0185 14.6613 8.88477 14.3375 8.88477 14Z"
+                      fill="#F8D4D4">
+                </path>
+                <path d="M32.6284 13.1004L26.2821 6.73675C26.0421 6.50814 25.7226 6.38257 25.3916 6.38682C25.0607 6.39107 24.7444 6.5248 24.5104 6.75949C24.2763 6.99418 24.143 7.31127 24.1387 7.64315C24.1345 7.97503 24.2597 8.29544 24.4877 8.53606L28.6667 12.7273H21.5771V15.2728H28.6667L24.4877 19.464C24.3649 19.581 24.2667 19.7215 24.1988 19.8772C24.131 20.0328 24.095 20.2006 24.0928 20.3704C24.0906 20.5403 24.1224 20.7089 24.1862 20.8662C24.25 21.0236 24.3446 21.1665 24.4644 21.2867C24.5842 21.4068 24.7268 21.5017 24.8837 21.5657C25.0407 21.6297 25.2088 21.6615 25.3782 21.6593C25.5476 21.6572 25.7148 21.621 25.8701 21.553C26.0253 21.485 26.1654 21.3865 26.2821 21.2633L32.6284 14.8997C32.8662 14.661 32.9998 14.3374 32.9998 14C32.9998 13.6626 32.8662 13.339 32.6284 13.1004Z"
+                      fill="#F8D4D4">
+                </path>
+            </svg>
+            Выход
+        </a>
+    </div>
+</header>
+<main class="main">
+    <form class="create-form" method="post" id="form" action="{% url 'survey:save_update' survey.id %}">
+        {% csrf_token %}
+        <span class="create-form__header">
+            Редактирование анкеты
+        </span>
+        <fieldset
+                class="edit-survey"
+                {% if not user.is_superuser and survey.created_by != user %}
+                disabled="disabled"
+                {% endif %}
+        >
+            <div class="edit-survey__line">
+                <label class="edit-survey__label" for="survey-title">Название:</label>
+                <input class="edit-survey__input" type="text" name="survey-title" id="survey-title" maxlength="200"
+                       value="{{ survey.title }}" required>
+            </div>
+            <div class="edit-survey__line edit-survey__line_vertical">
+                <label class="edit-survey__label" for="survey-desc">Описание:</label>
+                <textarea class="edit-survey__textarea" id="survey-desc" name="survey-desc"
+                          maxlength="1000">{{ survey.desc }}</textarea>
+            </div>
+            <div class="edit-survey__line edit-survey__line_left">
+                <div class="edit-survey__checkbox-wrapper">
+                    <input
+                            class="edit-survey__checkbox"
+                            type="checkbox"
+                            name="survey-status"
+                            id="survey-status"
+                            {% if survey.is_open %}
+                            checked
+                            {% endif %}
+                    >
+                    <div class="edit-survey__custom-box"></div>
+                </div>
+                <label class="edit-survey__label" for="survey-status">Открыто</label>
+            </div>
+            <div class="edit-survey__line edit-survey__line_vertical" id="sections-container">
+                <span class="edit-survey__label">Секции:</span>
+
+                {% for section in survey.section_set.all %}
+
+                    <div class="edit-section" id="edit-section-{{ section.id }}">
+                        <div class="edit-section__top-bar" id="section-{{ section.id }}-top-bar">
+                            <span class="edit-section__header">{{ section.title }}</span>
+                            <svg class="edit-section__icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                        onclick="addForDelete('section-{{ section.id }}-delete', 'section-{{ section.id }}-top-bar');"
+                                        fill-rule="evenodd"
+                                        clip-rule="evenodd"
+                                        d="M12 0C5.37273 0 0 5.37273 0 12C0 18.6273 5.37273 24 12 24C18.6273 24 24 18.6273 24 12C24 5.37273 18.6273 0 12 0ZM7.63636 10.9091C7.34704 10.9091 7.06956 11.024 6.86497 11.2286C6.66039 11.4332 6.54545 11.7107 6.54545 12C6.54545 12.2893 6.66039 12.5668 6.86497 12.7714C7.06956 12.976 7.34704 13.0909 7.63636 13.0909H16.3636C16.653 13.0909 16.9304 12.976 17.135 12.7714C17.3396 12.5668 17.4545 12.2893 17.4545 12C17.4545 11.7107 17.3396 11.4332 17.135 11.2286C16.9304 11.024 16.653 10.9091 16.3636 10.9091H7.63636Z"
+                                        fill="#F8D4D4"></path>
+                            </svg>
+                        </div>
+                        <div class="edit-section__line">
+                            <label class="edit-section__label" for="section-{{ section.id }}-title">Название:</label>
+                            <input class="edit-section__input" type="text" name="section-{{ section.id }}-title"
+                                   id="section-{{ section.id }}-title"
+                                   maxlength="200"
+                                   value="{{ section.title }}"
+                                   required>
+                        </div>
+                        <div class="edit-section__line edit-section__line_vertical">
+                            <label class="edit-section__label" for="section-{{ section.id }}-desc">Описание:</label>
+                            <textarea class="edit-section__textarea" id="section-{{ section.id }}-desc"
+                                      name="section-{{ section.id }}-desc"
+                                      maxlength="1000">{{ section.desc }}</textarea>
+                        </div>
+                        <div class="edit-section__line edit-section__line_vertical"
+                             id="questions-container-{{ section.id }}">
+                            <span class="edit-section__label">Вопросы:</span>
+
+                            {% for question in section.question_set.all %}
+
+                                <div class="edit-question" id="edit-question-{{ question.id }}">
+                                    <div class="edit-question__top-bar" id="question-{{ question.id }}-top-bar">
+                                        <span class="edit-question__header">{{ question.title }}</span>
+                                        <svg
+                                                onclick="addForDelete('question-{{ question.id }}-delete', 'question-{{ question.id }}-top-bar');"
+                                                class="edit-question__icon" width="24" height="24" viewBox="0 0 24 24"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  clip-rule="evenodd"
+                                                  d="M12 0C5.37273 0 0 5.37273 0 12C0 18.6273 5.37273 24 12 24C18.6273 24 24 18.6273 24 12C24 5.37273 18.6273 0 12 0ZM7.63636 10.9091C7.34704 10.9091 7.06956 11.024 6.86497 11.2286C6.66039 11.4332 6.54545 11.7107 6.54545 12C6.54545 12.2893 6.66039 12.5668 6.86497 12.7714C7.06956 12.976 7.34704 13.0909 7.63636 13.0909H16.3636C16.653 13.0909 16.9304 12.976 17.135 12.7714C17.3396 12.5668 17.4545 12.2893 17.4545 12C17.4545 11.7107 17.3396 11.4332 17.135 11.2286C16.9304 11.024 16.653 10.9091 16.3636 10.9091H7.63636Z"
+                                                  fill="#F8D4D4"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="edit-question__line">
+                                        <label class="edit-question__label"
+                                               for="section-{{ section.id }}-question-{{ question.id }}-title">Название:</label>
+                                        <input class="edit-question__input" type="text"
+                                               name="section-{{ section.id }}-question-{{ question.id }}-title"
+                                               id="section-{{ section.id }}-question-{{ question.id }}-title"
+                                               maxlength="200"
+                                               value="{{ question.title }}"
+                                               required>
+                                    </div>
+                                    <div class="edit-question__line">
+                                        <label class="edit-question__label"
+                                               for="section-{{ section.id }}-question-{{ question.id }}-type">
+                                            Тип вопроса:
+                                        </label>
+                                        <select name="section-{{ section.id }}-question-{{ question.id }}-type"
+                                                id="section-{{ section.id }}-question-{{ question.id }}-type"
+                                                class="edit-question__select" required>
+                                            {% for type in types %}
+                                                <option
+                                                        value="{{ type.id }}"
+                                                        class="edit-question__option"
+                                                        {% if question.type == type %}
+                                                        selected="selected"
+                                                        {% endif %}
+                                                >
+                                                    {{ type.name }}
+                                                </option>
+
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="edit-question__line edit-question__line_vertical">
+                                        <label class="edit-question__label"
+                                               for="section-{{ section.id }}-question-{{ question.id }}-question">Вопрос:</label>
+                                        <textarea class="edit-question__textarea"
+                                                  id="section-{{ section.id }}-question-{{ question.id }}-question"
+                                                  name="section-{{ section.id }}-question-{{ question.id }}-question"
+                                                  maxlength="1000" required>{{ question.question }}</textarea>
+                                    </div>
+                                    <div class="edit-question__line edit-question__line_vertical">
+                                        <label class="edit-question__label"
+                                               for="section-{{ section.id }}-question-{{ question.id }}-choices">Варианты
+                                            ответа:</label>
+                                        <textarea class="edit-question__textarea"
+                                                  id="section-{{ section.id }}-question-{{ question.id }}-choices"
+                                                  name="section-{{ section.id }}-question-{{ question.id }}-choices"
+                                                  maxlength="1000">{{ question.choices }}</textarea>
+                                        <span class="edit-question__hint">Каждый вариант ответа вводить с новой строки<br>
+                                            Оставить поле пустым, если выбран тип ответа в свободной форме</span>
+                                    </div>
+                                </div>
+
+                            {% endfor %}
+
+                            {% if user.is_superuser or survey.created_by == user %}
+                                <button class="edit-section__button"
+                                        onclick="addQuestion('questions-container-{{ section.id }}', '{{ section.id }}');"
+                                        id="section-button-{{ section.id }}" type="button">Добавить вопрос
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% endfor %}
+                {% if user.is_superuser or survey.created_by == user %}
+                    <button class="edit-survey__button" id="survey-button" onclick="addSection()" type="button">
+                        Добавить секцию
+                    </button>
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="create-form__controls">
+            <button class="create-form__button" id="survey-button-submit"
+                    onclick="submitForm();"
+                    type="button">Сохранить
+            </button>
+            <button class="create-form__button create-form__button_negative" id="survey-button-delete"
+                    onclick="
+                            addForDelete('survey-{{ survey.id }}-delete', 'survey-button-submit');
+                            submitForm();
+                            "
+                    type="button">Удалить
+            </button>
+            <button class="create-form__button create-form__button_negative" id="survey-button"
+                    onclick="window.location.href='{% url 'survey:index' %}';"
+                    type="button">Отмена
+            </button>
+        </div>
+    </form>
+</main>
+<footer class="footer">
+    <span class="footer__copyright">
+        2021 Rete Studio<sup class="footer__copyright">©</sup><br class="footer__copyright">
+        Копирование контента и размещение на других сайтах запрещено
+    </span>
+</footer>
+</body>
+</html>

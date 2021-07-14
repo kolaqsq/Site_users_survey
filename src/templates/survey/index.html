@@ -120,15 +120,17 @@
                     <div class="survey">
                         {% if user|has_group:"Operators" or user.is_superuser %}
                             <span class="survey__text">{{ survey.created_by }} </span>
-                            {#                        <button class="survey__button" onclick="window.location.href='{% url 'edit' survey.id %}';">#}
                             <button class="survey__button"
-                                    onclick="window.location.href='{% url 'survey:index' %}';">
+                                    onclick="window.location.href='{% url 'survey:update' survey.id %}';">
+                                {#                            <button class="survey__button"#}
+                                {#                                    onclick="window.location.href='{% url 'survey:index' %}';">#}
                                 <span>{{ survey.title }}</span>
                             </button>
                         {% else %}
-                            {#                        <button class="survey__button" onclick="window.location.href='{% url 'edit' survey.id %}';">#}
                             <button class="survey__button survey__button_long"
-                                    onclick="window.location.href='{% url 'survey:index' %}';">
+                                    onclick="window.location.href='{% url 'survey:update' survey.id %}';">
+                                {#                            <button class="survey__button survey__button_long"#}
+                                {#                                    onclick="window.location.href='{% url 'survey:index' %}';">#}
                                 <span>{{ survey.title }}</span>
                             </button>
                         {% endif %}

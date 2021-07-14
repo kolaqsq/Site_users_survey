@@ -1,0 +1,49 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Создано успешно</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@400;700;900&family=Stalinist+One&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'survey/css/main.css' %}" type="text/css">
+</head>
+<body class="page">
+<header class="header">
+    <span class="header__logo">Опросус</span>
+</header>
+<main class="main">
+    <div class="auth-form">
+        {% csrf_token %}
+        {% if survey %}
+            <span class="auth-form__header">
+            Анкета "{{ survey.title }}" создана успешно
+        </span>
+        {% else %}
+            <span class="auth-form__header">
+            Ошибка
+        </span>
+        {% endif %}
+        <button class="auth-form__button auth-form__button_margin"
+                onclick="window.location.href='{% url 'survey:index' %}';" type="button">
+            На главную
+        </button>
+    </div>
+</main>
+<footer class="footer">
+    <span class="footer__copyright">
+        2021 Rete Studio<sup class="footer__copyright">©</sup><br class="footer__copyright">
+        Копирование контента и размещение на других сайтах запрещено
+    </span>
+</footer>
+</body>
+</html>
