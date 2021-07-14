@@ -24,9 +24,11 @@ PROJECT_ROOT = os.path.dirname(__file__)
 SECRET_KEY = 'django-insecure-_qw)n1bw_4w!gmr-5te79ie_$qqnc+&3-5l5so5u+t=y=sneg1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'oprosus.std-950.ist.mospolytech.ru',
+]
 
 
 # Application definition
@@ -84,12 +86,12 @@ WSGI_APPLICATION = 'project_survey_site.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dev',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': 'std_950_survey',
+        'USER': 'std_950_survey',
+        'PASSWORD': '901109qsq',
         'HOST': 'db',
         'PORT': '3306',
-        'OPTIONS': {'charset': 'utf8mb4'},
+        # 'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 
