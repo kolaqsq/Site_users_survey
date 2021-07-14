@@ -997,6 +997,10 @@ html
   padding-bottom: (40px / 960px * 100vh)
   border-bottom: 2px dashed $accent-color
 
+  &_answer
+    justify-content: flex-start
+    width: auto
+
   &:last-of-type
     border-bottom: none
 
@@ -1016,6 +1020,9 @@ html
     box-shadow: -5px 5px 0px $accent-color
     height: 50px
     padding: 0 (20px / 1600px * 100vw)
+
+    &_answer
+      margin-left: (40px / 1600px * 100vw)
 
     &::selection
       background-color: $accent-color

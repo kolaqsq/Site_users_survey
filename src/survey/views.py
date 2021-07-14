@@ -73,21 +73,43 @@ class UpdateView(generic.TemplateView):
         return context
 
 
-class QuestionListView(generic.ListView):
+class AnswerListView(generic.ListView):
     template_name = 'survey/question_list.html'
 
     def get_queryset(self):
-        answer_list = AnswerSet.objects.filter(survey=Survey.objects.filter(pk=self.kwargs['survey_id']))
+        survey_instance = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
+
+        answer_list = AnswerSet.objects.filter(survey=survey_instance)
 
         return answer_list
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        answer_list = AnswerSet.objects.filter(survey=Survey.objects.filter(pk=self.kwargs['survey_id']))
+        survey_instance = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
+
+        answer_list = AnswerSet.objects.filter(survey=survey_instance)
 
         context['answer_list'] = answer_list
         context['user'] = self.request.user
+        context['survey'] = survey_instance
+
+        return context
+
+
+class AnswerView(generic.TemplateView):
+    template_name = 'survey/answer.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        survey_instance = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
+        answer_instance = get_object_or_404(AnswerSet, pk=self.kwargs['answer_id'])
+
+        context['user'] = self.request.user
+        context['types'] = QuestionType.objects.all()
+        context['survey'] = survey_instance
+        context['answer'] = answer_instance
 
         return context
 

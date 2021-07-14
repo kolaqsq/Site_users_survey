@@ -992,6 +992,10 @@ html {
   padding-bottom: 4.1666666667vh;
   border-bottom: 2px dashed #9E6060;
 }
+.survey_answer {
+  justify-content: flex-start;
+  width: auto;
+}
 .survey:last-of-type {
   border-bottom: none;
 }
@@ -1011,6 +1015,9 @@ html {
   box-shadow: -5px 5px 0px #9E6060;
   height: 50px;
   padding: 0 1.25vw;
+}
+.survey__text_answer {
+  margin-left: 2.5vw;
 }
 .survey__text::selection {
   background-color: #9E6060;
