@@ -46,6 +46,19 @@ class IndexView(generic.ListView):
         return context
 
 
+class SurveyView(generic.TemplateView):
+    template_name = 'survey/survey.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        survey_instance = get_object_or_404(Survey, pk=self.kwargs['survey_id'])
+
+        context['survey'] = survey_instance
+
+        return context
+
+
 class CreateView(generic.TemplateView):
     template_name = 'survey/create.html'
 
@@ -109,9 +122,23 @@ class AnswerView(generic.TemplateView):
         context['user'] = self.request.user
         context['types'] = QuestionType.objects.all()
         context['survey'] = survey_instance
-        context['answer'] = answer_instance
+        context['answerset'] = answer_instance
 
         return context
+
+
+class DashboardView(generic.TemplateView):
+    template_name = 'survey/dashboard.html'
+
+
+def dashboard_with_pivot(request):
+    return render(request, 'dashboard/dashboard_with_pivot.html', {})
+
+
+def pivot_data(request):
+    dataset = Answer.objects.all()
+    data = serializers.serialize('json', dataset)
+    return JsonResponse(data, safe=False)
 
 
 @login_required
@@ -197,7 +224,7 @@ def saveSuccess(request, survey_id):
 
 
 @login_required
-def save_update(request, survey_id):
+def saveUpdate(request, survey_id):
     survey_instance = Survey.objects.filter(pk=survey_id).update(
         title=''.join(request.POST.getlist('survey-title')),
         desc=''.join(request.POST.getlist('survey-desc')),
@@ -317,12 +344,6 @@ def deleteSuccess(request):
     return render(request, 'survey/delete_success.html')
 
 
-def survey(request, survey_id):
-    survey_instance = get_object_or_404(Survey, pk=survey_id)
-
-    return render(request, 'survey/survey.html', {'survey': survey_instance})
-
-
 def submit(request, survey_id):
     survey_instance = get_object_or_404(Survey, pk=survey_id)
     section_list = survey_instance.section_set.all()
@@ -345,11 +366,3 @@ def result(request, survey_id):
     return render(request, 'survey/result.html', {'survey': survey_instance})
 
 
-def dashboard_with_pivot(request):
-    return render(request, 'dashboard/dashboard_with_pivot.html', {})
-
-
-def pivot_data(request):
-    dataset = Answer.objects.all()
-    data = serializers.serialize('json', dataset)
-    return JsonResponse(data, safe=False)

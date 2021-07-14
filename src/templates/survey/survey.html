@@ -1,127 +1,183 @@
-{% if survey.is_open %}
+{% load static %}
+{% load group_tags %}
 
-    <form action="{% url 'survey:submit' survey.id %}" method="post">
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <title>Анкетирование</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@400;700;900&family=Stalinist+One&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'survey/css/main.css' %}" type="text/css">
+
+</head>
+<body class="page">
+<header class="header">
+    <a class="header__logo" href="{% url 'survey:index' %}">Опросус</a>
+</header>
+<main class="main">
+    <form class="create-form" method="post" id="form" action="{% url 'survey:submit' survey.id %}">
         {% csrf_token %}
+        {% if survey.is_open %}
+            <span class="create-form__header">
+            {{ survey.title }}
+        </span>
+            <fieldset class="edit-survey">
+                <div class="edit-survey__line edit-survey__line_vertical">
+                    <span class="edit-survey__label edit-survey__label_small">{{ survey.desc }}</span>
+                </div>
 
-        <fieldset>
-            <legend>
-                <h1>{{ survey.title }}</h1>
-                <h2>{{ survey.desc }}</h2>
-            </legend>
+                <div class="edit-survey__line edit-survey__line_vertical" id="sections-container">
 
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+                    {% for section in survey.section_set.all %}
 
-            {% for section in survey.section_set.all %}
+                        <div class="edit-section">
+                            <div class="edit-section__top-bar">
+                                <span class="edit-section__header">{{ section.title }}</span>
+                            </div>
+                            <div class="edit-section__line edit-section__line_vertical">
+                                <span class="edit-section__label edit-section__label_small">{{ section.desc }}</span>
+                            </div>
+                            <div class="edit-section__line edit-section__line_vertical">
 
-                <legend>
-                    <h2>{{ section.title }}</h2>
-                    <h3>{{ section.desc }}</h3>
-                </legend>
+                                {% for question in section.question_set.all %}
 
-                {% for question in section.question_set.all %}
+                                    <div class="edit-question">
+                                        <div class="edit-question__top-bar">
+                                            <span class="edit-question__header">{{ question.title }}</span>
+                                        </div>
 
-                    <legend>
-                        <h3>{{ question.title }}</h3>
-                        <h4>{{ question.type }}</h4>
-                        <h4>{{ question.question }}</h4>
-                    </legend>
+                                        <div class="edit-question__line edit-question__line_vertical">
+                                            <span class="edit-question__label">{{ question.question }}</span>
+                                        </div>
+                                        <div class="edit-question__line edit-question__line_vertical"
+                                             id="question_{{ question.id }}">
+                                            {% if question.type.name == 'Выбрать один вариант' %}
 
-                    {% if question.type.name == 'Выбрать один вариант' %}
+                                                {% for choice in question.choices_as_list %}
+                                                    <div class="edit-question__line edit-question__line_left">
+                                                        <div class="edit-survey__checkbox-wrapper">
+                                                            <input
+                                                                    class="edit-survey__checkbox"
+                                                                    type="radio"
+                                                                    name="answer_{{ question.id }}"
+                                                                    id="question{{ question.id }}_choice{{ forloop.counter }}"
+                                                                    value="{{ choice }}"
+                                                                    required
+                                                            >
+                                                            <div class="edit-survey__custom-box"></div>
+                                                        </div>
+                                                        <label class="edit-survey__label"
+                                                               for="question{{ question.id }}_choice{{ forloop.counter }}">{{ choice }}</label>
+                                                    </div>
+                                                {% endfor %}
 
-                        {% for choice in question.choices_as_list %}
+                                            {% elif question.type.name == 'Выбрать несколько вариантов' %}
 
-                            <input
-                                    type="radio"
-                                    name="answer_{{ question.id }}"
-                                    id="question{{ question.id }}_choice{{ forloop.counter }}"
-                                    value="{{ choice }}"
-                                    required
-                            >
-                            <label for="question{{ question.id }}_choice{{ forloop.counter }}">
-                                {{ choice }}
-                            </label><br>
+                                                {% for choice in question.choices_as_list %}
 
-                        {% endfor %}
+                                                    <div class="edit-question__line edit-question__line_left">
+                                                        <div class="edit-survey__checkbox-wrapper">
+                                                            <input
+                                                                    class="edit-survey__checkbox"
+                                                                    type="checkbox"
+                                                                    name="answer_{{ question.id }}"
+                                                                    id="question{{ question.id }}_choice{{ forloop.counter }}"
+                                                                    value="{{ choice }}"
+                                                            >
+                                                            <div class="edit-survey__custom-box"></div>
+                                                        </div>
+                                                        <label class="edit-survey__label"
+                                                               for="question{{ question.id }}_choice{{ forloop.counter }}">{{ choice }}</label>
+                                                    </div>
 
-                    {% elif question.type.name == 'Выбрать несколько вариантов' %}
+                                                {% endfor %}
 
-                        <div id="question_{{ question.id }}">
+                                                <script>
+                                                    (function () {
+                                                        const form = document.querySelector('#question_{{ question.id }}');
+                                                        const checkboxes = form.querySelectorAll('input[type=checkbox]');
+                                                        const checkboxLength = checkboxes.length;
+                                                        const firstCheckbox = checkboxLength > 0 ? checkboxes[0] : null;
 
-                            {% for choice in question.choices_as_list %}
+                                                        function init() {
+                                                            if (firstCheckbox) {
+                                                                for (let i = 0; i < checkboxLength; i++) {
+                                                                    checkboxes[i].addEventListener('change', checkValidity);
+                                                                }
 
-                                <input
-                                        type="checkbox"
-                                        name="answer_{{ question.id }}"
-                                        id="question{{ question.id }}_choice{{ forloop.counter }}"
-                                        value="{{ choice }}"
-                                >
-                                <label for="question{{ question.id }}_choice{{ forloop.counter }}">
-                                    {{ choice }}
-                                </label><br>
+                                                                checkValidity();
+                                                            }
+                                                        }
 
-                            {% endfor %}
+                                                        function isChecked() {
+                                                            for (let i = 0; i < checkboxLength; i++) {
+                                                                if (checkboxes[i].checked) return true;
+                                                            }
 
+                                                            return false;
+                                                        }
+
+                                                        function checkValidity() {
+                                                            const errorMessage = !isChecked() ? 'At least one checkbox must be selected.' : '';
+                                                            firstCheckbox.setCustomValidity(errorMessage);
+                                                        }
+
+                                                        init();
+                                                    })();
+                                                </script>
+
+                                            {% else %}
+
+                                                <div class="edit-question__line edit-question__line_vertical">
+                                                    <label class="edit-question__label"
+                                                           for="question{{ question.id }}_answer">Ответ:</label>
+                                                    <textarea class="edit-question__textarea"
+                                                              id="question{{ question.id }}_answer"
+                                                              name="answer_{{ question.id }}"
+                                                              maxlength="500"
+                                                              required></textarea>
+                                                </div>
+
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
                         </div>
 
-                        <script>
-                            (function () {
-                                const form = document.querySelector('#question_{{ question.id }}');
-                                const checkboxes = form.querySelectorAll('input[type=checkbox]');
-                                const checkboxLength = checkboxes.length;
-                                const firstCheckbox = checkboxLength > 0 ? checkboxes[0] : null;
+                    {% endfor %}
 
-                                function init() {
-                                    if (firstCheckbox) {
-                                        for (let i = 0; i < checkboxLength; i++) {
-                                            checkboxes[i].addEventListener('change', checkValidity);
-                                        }
-
-                                        checkValidity();
-                                    }
-                                }
-
-                                function isChecked() {
-                                    for (let i = 0; i < checkboxLength; i++) {
-                                        if (checkboxes[i].checked) return true;
-                                    }
-
-                                    return false;
-                                }
-
-                                function checkValidity() {
-                                    const errorMessage = !isChecked() ? 'At least one checkbox must be selected.' : '';
-                                    firstCheckbox.setCustomValidity(errorMessage);
-                                }
-
-                                init();
-                            })();
-                        </script>
-
-                    {% else %}
-
-                        <label for="question{{ question.id }}_answer">
-                            Ответ:
-                        </label>
-                        <input
-                                type="text"
-                                name="answer_{{ question.id }}"
-                                id="question{{ question.id }}_answer"
-                                required>
-
-                    {% endif %}
-
-                {% endfor %}
-
-            {% endfor %}
-
-        </fieldset>
-
-        <input type="submit" value="Vote">
+                </div>
+            </fieldset>
+            <div class="create-form__controls">
+                <button class="create-form__button" id="survey-button-submit"
+                        onclick="submit();"
+                        type="button">Сохранить
+                </button>
+            </div>
+        {% else %}
+            <span class="create-form__header">
+            Анкета закрыта
+        </span>
+        {% endif %}
     </form>
-
-{% else %}
-
-    <p>Анкета закрыта.</p>
-
-{% endif %}
+</main>
+<footer class="footer">
+    <span class="footer__copyright">
+        2021 Rete Studio<sup class="footer__copyright">©</sup><br class="footer__copyright">
+        Копирование контента и размещение на других сайтах запрещено
+    </span>
+</footer>
+</body>
+</html>

@@ -13,7 +13,7 @@ urlpatterns = [
                   path('survey/create/<str:survey_id>/success/', views.saveSuccess, name='save_success'),  # saved
                   path('survey/<str:survey_id>/update/',
                        login_required(views.UpdateView.as_view()), name='update'),  # update survey
-                  path('survey/<str:survey_id>/update/save/', views.save_update, name='save_update'),  # save update
+                  path('survey/<str:survey_id>/update/save/', views.saveUpdate, name='save_update'),  # save update
                   path('survey/<str:survey_id>/update/success/', views.updateSuccess, name='update_success'),  # updated
                   path('survey/delete/success/', views.deleteSuccess, name='delete_success'),  # deleted
                   path('survey/<str:survey_id>/answers/',
@@ -22,7 +22,7 @@ urlpatterns = [
                        login_required(views.AnswerView.as_view()), name='answer'),  # answer
                   # path('dashboard/', views.dashboard_with_pivot, name='dashboard_with_pivot'),
                   # path('dashboard/data/', views.pivot_data, name='pivot_data'),
-                  path('survey/<str:survey_id>/', views.survey, name='survey'),  # survey
+                  path('survey/<str:survey_id>/', views.SurveyView.as_view(), name='survey'),  # survey
                   path('survey/<str:survey_id>/result/', views.result, name='result'),  # result
                   path('survey/<str:survey_id>/submit/', views.submit, name='submit'),  # submit
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

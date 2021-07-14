@@ -113,6 +113,9 @@ class Answer(models.Model):
         template = 'Ответ на вопрос {0.question.title}'
         return template.format(self)
 
+    def choices_as_list(self):
+        return self.answer.split('\n')
+
     class Meta:
         verbose_name = 'Ответ'
         verbose_name_plural = 'Ответы'

@@ -667,6 +667,9 @@ html {
   font-weight: 700;
   font-size: 1.875rem;
 }
+.edit-section__label_small {
+  font-size: 1.5rem;
+}
 .edit-section__label::selection {
   color: #F8D4D4;
   background-color: #9E6060;
@@ -847,11 +850,17 @@ html {
   flex-flow: column nowrap;
   align-items: flex-start;
 }
+.edit-question__line_left {
+  justify-content: flex-start;
+}
 .edit-question__label {
   color: #9E6060;
   font-family: "Ruda", sans-serif;
   font-weight: 700;
   font-size: 1.875rem;
+}
+.edit-question__label_small {
+  font-size: 1.5rem;
 }
 .edit-question__label::selection {
   color: #F8D4D4;
