@@ -19,7 +19,7 @@ class IndexView(generic.ListView):
         query = self.request.GET.get('q', '')
 
         survey_list = Survey.objects.filter(created_by=self.request.user)
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.groups.filter(name='Operators'):
             survey_list = Survey.objects.all()
 
         if query:
@@ -33,7 +33,7 @@ class IndexView(generic.ListView):
         query = self.request.GET.get('q', '')
 
         survey_list = Survey.objects.filter(created_by=self.request.user)
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.groups.filter(name='Operators'):
             survey_list = Survey.objects.all()
 
         if query:
@@ -69,6 +69,25 @@ class UpdateView(generic.TemplateView):
         context['user'] = self.request.user
         context['types'] = QuestionType.objects.all()
         context['survey'] = survey_instance
+
+        return context
+
+
+class QuestionListView(generic.ListView):
+    template_name = 'survey/question_list.html'
+
+    def get_queryset(self):
+        answer_list = AnswerSet.objects.filter(survey=Survey.objects.filter(pk=self.kwargs['survey_id']))
+
+        return answer_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        answer_list = AnswerSet.objects.filter(survey=Survey.objects.filter(pk=self.kwargs['survey_id']))
+
+        context['answer_list'] = answer_list
+        context['user'] = self.request.user
 
         return context
 
