@@ -20,7 +20,7 @@ urlpatterns = [
                        login_required(views.AnswerListView.as_view()), name='answer_list'),  # answers list
                   path('survey/<str:survey_id>/answers/<str:answer_id>',
                        login_required(views.AnswerView.as_view()), name='answer'),  # answer
-                  # path('dashboard/', views.dashboard_with_pivot, name='dashboard_with_pivot'),
+                  path('dashboard/', views.DashboardView.as_view(), name='dashboard'),  # dashboard
                   # path('dashboard/data/', views.pivot_data, name='pivot_data'),
                   path('survey/<str:survey_id>/', views.SurveyView.as_view(), name='survey'),  # survey
                   path('survey/<str:survey_id>/result/', views.result, name='result'),  # result

@@ -130,15 +130,74 @@ class AnswerView(generic.TemplateView):
 class DashboardView(generic.TemplateView):
     template_name = 'survey/dashboard.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-def dashboard_with_pivot(request):
-    return render(request, 'dashboard/dashboard_with_pivot.html', {})
+        data_creators_raw = {}
+        data_consumers_raw = {}
 
+        survey_list = Survey.objects.all()
+        section_list = Section.objects.all()
+        question_list = Question.objects.all()
+        answer_list = AnswerSet.objects.all()
 
-def pivot_data(request):
-    dataset = Answer.objects.all()
-    data = serializers.serialize('json', dataset)
-    return JsonResponse(data, safe=False)
+        for survey in survey_list:
+            created = survey.created_at.strftime("new Date(%Y, %m, %d)")
+            updated = survey.updated_at.strftime("new Date(%Y, %m, %d)")
+
+            if created in data_creators_raw:
+                data_creators_raw[created] += 1
+            else:
+                data_creators_raw[created] = 1
+
+            if updated in data_creators_raw:
+                data_creators_raw[updated] += 1
+            else:
+                data_creators_raw[updated] = 1
+
+        for section in section_list:
+            created = section.created_at.strftime("new Date(%Y, %m, %d)")
+            updated = section.updated_at.strftime("new Date(%Y, %m, %d)")
+
+            if created in data_creators_raw:
+                data_creators_raw[created] += 1
+            else:
+                data_creators_raw[created] = 1
+
+            if updated in data_creators_raw:
+                data_creators_raw[updated] += 1
+            else:
+                data_creators_raw[updated] = 1
+
+        for question in question_list:
+            created = question.created_at.strftime("new Date(%Y, %m, %d)")
+            updated = question.updated_at.strftime("new Date(%Y, %m, %d)")
+
+            if created in data_creators_raw:
+                data_creators_raw[created] += 1
+            else:
+                data_creators_raw[created] = 1
+
+            if updated in data_creators_raw:
+                data_creators_raw[updated] += 1
+            else:
+                data_creators_raw[updated] = 1
+
+        for answer in answer_list:
+            created = answer.created_at.strftime("new Date(%Y, %m, %d)")
+
+            if created in data_consumers_raw:
+                data_consumers_raw[created] += 1
+            else:
+                data_consumers_raw[created] = 1
+
+        data_creators_good = list(map(list, data_creators_raw.items()))
+        data_consumers_good = list(map(list, data_consumers_raw.items()))
+
+        context['data_creators'] = data_creators_good
+        context['data_consumers'] = data_consumers_good
+
+        return context
 
 
 @login_required
@@ -364,5 +423,3 @@ def submit(request, survey_id):
 def result(request, survey_id):
     survey_instance = get_object_or_404(Survey, pk=survey_id)
     return render(request, 'survey/result.html', {'survey': survey_instance})
-
-

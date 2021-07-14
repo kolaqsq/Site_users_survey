@@ -84,6 +84,14 @@ html {
   height: 100%;
 }
 
+.dash {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .auth-form {
   display: flex;
   flex-flow: column nowrap;
