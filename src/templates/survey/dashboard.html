@@ -150,11 +150,17 @@
 </header>
 <main class="main">
     <div class="surveys">
-        <div class="surveys__navbar">
-            <span class="surveys__header">Дашборд</span>
-        </div>
-        <div class="dash" id="calendar_creators"></div>
-        <div class="dash" id="calendar_consumers"></div>
+        {% if user|has_group:"Operators" or user.is_superuser %}
+            <div class="surveys__navbar">
+                <span class="surveys__header">Дашборд</span>
+            </div>
+            <div class="dash" id="calendar_creators"></div>
+            <div class="dash" id="calendar_consumers"></div>
+        {% else %}
+            <div class="surveys__navbar">
+                <span class="surveys__header">Доступ запрещен</span>
+            </div>
+        {% endif %}
     </div>
 </main>
 <footer class="footer">
