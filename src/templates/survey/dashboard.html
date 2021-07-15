@@ -40,7 +40,7 @@
 
             var chart_consumers = new google.visualization.Calendar(document.getElementById('calendar_consumers'));
 
-            var options = {
+            var options_a = {
                 title: "Активность авторов анкет",
                 height: 250,
                 calendar: {
@@ -101,9 +101,70 @@
                 }
             };
 
-            chart_creators.draw(dataTableCreators, options);
+            var options_b = {
+                title: "Активность пользователей",
+                height: 250,
+                calendar: {
+                    cellSize: 15,
+                    cellColor: {
+                        stroke: '#9E6060',
+                        strokeOpacity: 0.5,
+                        strokeWidth: 1,
+                    },
+                    focusedCellColor: {
+                        stroke: '#9E6060',
+                        strokeOpacity: 1,
+                        strokeWidth: 1,
+                    },
+                    dayOfWeekLabel: {
+                        fontName: 'Ruda',
+                        fontSize: 12,
+                        color: '#9E6060',
+                        bold: true,
+                        italic: false,
+                    },
+                    dayOfWeekRightSpace: 10,
+                    daysOfWeek: 'DLMMJVS',
+                    monthLabel: {
+                        fontName: 'Ruda',
+                        fontSize: 12,
+                        color: '#9E6060',
+                        bold: true,
+                        italic: false
+                    },
+                    monthOutlineColor: {
+                        stroke: '#9E6060',
+                        strokeOpacity: 1,
+                        strokeWidth: 2
+                    },
+                    unusedMonthOutlineColor: {
+                        stroke: '#F46666',
+                        strokeOpacity: 1,
+                        strokeWidth: 1
+                    },
+                    underMonthSpace: 16,
+                    underYearSpace: 10,
+                    yearLabel: {
+                        fontName: 'Ruda',
+                        fontSize: 32,
+                        color: '#9E6060',
+                        bold: true,
+                        italic: false
+                    },
+                },
+                colorAxis: {
+                    minValue: 0,
+                    colors: ['#F8D4D4', '#F46666', '#9E6060']
+                },
+                noDataPattern: {
+                    backgroundColor: '#F8D4D4',
+                    color: '#F8D4D4'
+                }
+            };
 
-            chart_consumers.draw(dataTableConsumers, options);
+            chart_creators.draw(dataTableCreators, options_a);
+
+            chart_consumers.draw(dataTableConsumers, options_b);
         }
     </script>
 </head>
